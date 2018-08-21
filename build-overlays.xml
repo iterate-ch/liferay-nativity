@@ -39,5 +39,11 @@
             <property name="overlay.id" value="${overlay.id.ignored}"/>
             <property name="overlay.path" value="${overlay.path.ignored}"/>
         </ant>
+        <ant target="build-windows-overlays" inheritAll="false">
+            <property name="overlay.name" value="${overlay.name.pause}"/>
+            <property name="overlay.guid" value="${overlay.guid.pause}"/>
+            <property name="overlay.id" value="${overlay.id.pause}"/>
+            <property name="overlay.path" value="${overlay.path.pause}"/>
+        </ant>
     </target>
 </project>
