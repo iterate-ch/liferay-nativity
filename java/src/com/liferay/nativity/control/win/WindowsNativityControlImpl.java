@@ -65,6 +65,7 @@ public class WindowsNativityControlImpl extends NativityControl {
 		if (!createSocket()) {
 			return false;
 		}
+		_connected = true;
 
 		Runnable runnable = new Runnable() {
 			@Override
@@ -92,9 +93,6 @@ public class WindowsNativityControlImpl extends NativityControl {
 		try {
 			if (_serverSocket == null || _serverSocket.isClosed()) {
 				_serverSocket = new ServerSocket();
-			}
-			else if (_serverSocket.isBound()) {
-				return true;
 			}
 
 			while (retries++ < 5) {
