@@ -93,6 +93,9 @@ public class WindowsNativityControlImpl extends NativityControl {
 			if (_serverSocket == null || _serverSocket.isClosed()) {
 				_serverSocket = new ServerSocket();
 			}
+			else if (_serverSocket.isBound()) {
+				return true;
+			}
 
 			while (retries++ < 5) {
 				_port = random.nextInt(16384) + 49152;
