@@ -19,7 +19,7 @@ using namespace std;
 
 ContextMenuUtil::ContextMenuUtil() : _menuList(0)
 {
-	unique_ptr<int> port;
+	unique_ptr<int> port = make_unique<int>();
 	RegistryUtil::ReadRegistry(REGISTRY_ROOT_KEY, REGISTRY_PORT, port.get());
 	_communicationSocket = new CommunicationSocket(*port);
 	_selectedFiles = new vector<wstring>;
