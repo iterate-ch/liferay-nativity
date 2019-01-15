@@ -25,11 +25,11 @@ import com.liferay.nativity.util.win.RegistryUtil;
 
 import java.io.IOException;
 
-import java.net.InetAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.net.SocketException;
+import java.net.*;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -62,17 +62,8 @@ public class WindowsNativityControlImpl extends NativityControl {
 			return false;
 		}
 
-		if (_serverSocket == null || _serverSocket.isClosed()) {
-			try {
-				_serverSocket = new ServerSocket(_port, 50, InetAddress.getLoopbackAddress());
-
-				_connected = true;
-			}
-			catch (IOException ioe) {
-				_logger.error(ioe.getMessage(), ioe);
-
-				return false;
-			}
+		if (!createSocket()) {
+			return false;
 		}
 
 		Runnable runnable = new Runnable() {
@@ -92,6 +83,37 @@ public class WindowsNativityControlImpl extends NativityControl {
 		_executor.execute(runnable);
 
 		return true;
+	}
+
+	boolean createSocket() {
+		int retries = 0;
+		final Random random = new Random();
+		final IOException socketThrowable = new IOException();
+		try {
+			if (_serverSocket == null || _serverSocket.isClosed()) {
+				_serverSocket = new ServerSocket();
+			}
+
+			while (retries++ < 5) {
+				_port = random.nextInt(16384) + 49152;
+				try {
+					final InetSocketAddress socketAddress = new InetSocketAddress(InetAddress.getLoopbackAddress(), _port);
+					_serverSocket.bind(socketAddress, 50);
+					RegistryUtil.writeRegistry(Constants.NATIVITY_REGISTRY_KEY, Constants.PORT_REGISTRY_NAME, _port);
+					return true;
+				}
+				catch (IOException ioe) {
+					socketThrowable.addSuppressed(ioe);
+				}
+			}
+
+			throw socketThrowable;
+		}
+		catch (IOException ex) {
+			_logger.error(ex.getMessage(), ex);
+
+			return false;
+		}
 	}
 
 	@Override

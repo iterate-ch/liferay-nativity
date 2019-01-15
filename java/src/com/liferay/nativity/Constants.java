@@ -49,6 +49,8 @@ public class Constants {
 	public static final String NATIVITY_REGISTRY_KEY =
 		"SOFTWARE\\iterate GmbH\\Mountain Duck";
 
+	public static final String PORT_REGISTRY_NAME = "Port";
+
 	public static final String PATH = "path";
 
 	public static final String REFRESH_ICONS = "refreshIcons";
