@@ -136,7 +136,9 @@ bool LiferayNativityOverlay::_IsMonitoredFileState(const wchar_t* filePath)
 
 	if (_communicationSocket == 0)
 	{
-		_communicationSocket = new CommunicationSocket(PORT);
+		int* port = new int();
+		RegistryUtil::ReadRegistry(REGISTRY_ROOT_KEY, REGISTRY_PORT, port);
+		_communicationSocket = new CommunicationSocket(*port);
 	}
 
 	Json::Value jsonRoot;
