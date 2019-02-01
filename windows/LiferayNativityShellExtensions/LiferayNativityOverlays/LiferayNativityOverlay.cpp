@@ -13,6 +13,7 @@
  */
 
 #include "LiferayNativityOverlay.h"
+#include <memory>
 
 using namespace std;
 
@@ -136,8 +137,8 @@ bool LiferayNativityOverlay::_IsMonitoredFileState(const wchar_t* filePath)
 
 	if (_communicationSocket == 0)
 	{
-		int* port = new int();
-		RegistryUtil::ReadRegistry(REGISTRY_ROOT_KEY, REGISTRY_PORT, port);
+		unique_ptr<int> port = make_unique<int>();
+		RegistryUtil::ReadRegistry(REGISTRY_ROOT_KEY, REGISTRY_PORT, port.get());
 		_communicationSocket = new CommunicationSocket(*port);
 	}
 
