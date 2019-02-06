@@ -17,12 +17,55 @@
 #include <WinSock2.h>
 #include <Ws2def.h>
 #include <windows.h>
+#include <memory>
+#include "RegistryUtil.h"
 
 using namespace std;
 
 #define DEFAULT_BUFLEN 4096
 
-CommunicationSocket::CommunicationSocket(int port): _port(port)
+bool connect(int &port, SOCKET &clientSocket, sockaddr_in &clientService, bool retry) {
+	clientSocket = INVALID_SOCKET;
+	clientSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	if (clientSocket == INVALID_SOCKET) {
+		int error = WSAGetLastError();
+
+		return false;
+	}
+
+	clientService.sin_family = AF_INET;
+	clientService.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
+	clientService.sin_port = htons(port);
+
+	HRESULT hResult = connect(clientSocket, (SOCKADDR*)&clientService, sizeof(clientService));
+
+	if (FAILED(hResult)) {
+		int error = WSAGetLastError();
+
+		closesocket(clientSocket);
+		if (retry) {
+			unique_ptr<int> tempPort = make_unique<int>();
+
+			if (!RegistryUtil::ReadRegistry(REGISTRY_ROOT_KEY, REGISTRY_PORT, tempPort.get())) {
+				return false;
+			}
+
+			if (*tempPort == port) {
+				return false;
+			}
+
+			port = *tempPort;
+			return connect(port, clientSocket, clientService, false);
+		}
+		else {
+			return false;
+		}
+	}
+
+	return true;
+}
+
+CommunicationSocket::CommunicationSocket() : _port(0)
 {
 	WSADATA wsaData;
 
@@ -41,31 +84,10 @@ CommunicationSocket::~CommunicationSocket()
 
 bool CommunicationSocket::ReceiveResponseOnly(wstring* message)
 {
-	SOCKET clientSocket = INVALID_SOCKET;
-
-	clientSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-
-	if (clientSocket == INVALID_SOCKET)
-	{
-		int error = WSAGetLastError();
-
-		return false;
-	}
-
+	SOCKET clientSocket;
 	struct sockaddr_in clientService;
 
-	clientService.sin_family = AF_INET;
-	clientService.sin_addr.s_addr = inet_addr("127.0.0.1");
-	clientService.sin_port = htons(_port);
-
-	HRESULT hResult = connect(clientSocket, (SOCKADDR*) &clientService, sizeof(clientService));
-
-	if (FAILED(hResult))
-	{
-		int error = WSAGetLastError();
-
-		closesocket(clientSocket);
-
+	if (!connect(_port, clientSocket, clientService, true)) {
 		return false;
 	}
 
@@ -78,7 +100,7 @@ bool CommunicationSocket::ReceiveResponseOnly(wstring* message)
 
 		if (bytesRead > 0)
 		{
-			wchar_t* buf = new wchar_t[ bytesRead / 2 + 1];
+			wchar_t* buf = new wchar_t[bytesRead / 2 + 1];
 			int value;
 
 			int j = 0;
@@ -98,10 +120,9 @@ bool CommunicationSocket::ReceiveResponseOnly(wstring* message)
 
 			delete[] buf;
 		}
-	}
-	while (bytesRead > 0);
+	} while (bytesRead > 0);
 
-	hResult = shutdown(clientSocket, SD_BOTH);
+	HRESULT hResult = shutdown(clientSocket, SD_BOTH);
 
 	if (FAILED(hResult))
 	{
@@ -137,31 +158,10 @@ bool CommunicationSocket::_ConvertData(wchar_t* buf, int bytesRead, char* rec_bu
 
 bool CommunicationSocket::SendMessageReceiveResponse(const wchar_t* message, wstring* response)
 {
-	SOCKET clientSocket = INVALID_SOCKET;
-
-	clientSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-
-	if (clientSocket == INVALID_SOCKET)
-	{
-		int error = WSAGetLastError();
-
-		return false;
-	}
-
+	SOCKET clientSocket;
 	struct sockaddr_in clientService;
 
-	clientService.sin_family = AF_INET;
-	clientService.sin_addr.s_addr = inet_addr("127.0.0.1");
-	clientService.sin_port = htons(_port);
-
-	HRESULT hResult = connect(clientSocket, (SOCKADDR*) &clientService, sizeof(clientService));
-
-	if (FAILED(hResult))
-	{
-		int error = WSAGetLastError();
-
-		closesocket(clientSocket);
-
+	if (!connect(_port, clientSocket, clientService, true)) {
 		return false;
 	}
 

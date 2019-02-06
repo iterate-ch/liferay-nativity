@@ -24,12 +24,16 @@ extern HINSTANCE instanceHandle;
 #define IDM_DISPLAY 0
 #define IDB_OK 101
 
-LiferayNativityOverlay::LiferayNativityOverlay(): _communicationSocket(0), _referenceCount(1)
+LiferayNativityOverlay::LiferayNativityOverlay() : _referenceCount(1)
 {
+	_communicationSocket = new CommunicationSocket();
 }
 
 LiferayNativityOverlay::~LiferayNativityOverlay(void)
 {
+	if (_communicationSocket != nullptr) {
+		delete _communicationSocket;
+	}
 }
 
 IFACEMETHODIMP_(ULONG) LiferayNativityOverlay::AddRef()
@@ -134,13 +138,6 @@ bool LiferayNativityOverlay::_IsOverlaysEnabled()
 bool LiferayNativityOverlay::_IsMonitoredFileState(const wchar_t* filePath)
 {
 	bool needed = false;
-
-	if (_communicationSocket == 0)
-	{
-		unique_ptr<int> port = make_unique<int>();
-		RegistryUtil::ReadRegistry(REGISTRY_ROOT_KEY, REGISTRY_PORT, port.get());
-		_communicationSocket = new CommunicationSocket(*port);
-	}
 
 	Json::Value jsonRoot;
 
