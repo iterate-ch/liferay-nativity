@@ -28,7 +28,7 @@
 class __declspec(dllexport) CommunicationSocket
 {
 	public:
-		CommunicationSocket(int port);
+		CommunicationSocket();
 		~CommunicationSocket();
 
 		bool ReceiveResponseOnly(std::wstring*);

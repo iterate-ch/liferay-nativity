@@ -22,7 +22,7 @@ using namespace std;
 
 #define DEFAULT_BUFLEN 4096
 
-CommunicationSocket::CommunicationSocket(int port): _port(port)
+CommunicationSocket::CommunicationSocket() : _port(0)
 {
 	WSADATA wsaData;
 
