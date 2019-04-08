@@ -1,6 +1,9 @@
-$version = "%1"
+Param(
+	[Parameter(Mandatory=$true)] [String] $version
+)
 
-ant clean compile build-jar build-windows-menus build-windows-native-util build-windows-util
+mvn clean install
+ant build-windows-menus build-windows-native-util build-windows-util
 ant -f build-overlays.xml overlays
 
 foreach ($file in Get-ChildItem dist\*.dll) {
