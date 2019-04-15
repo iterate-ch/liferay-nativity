@@ -27,8 +27,6 @@ import java.io.IOException;
 
 import java.net.*;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
@@ -42,7 +40,6 @@ import org.slf4j.LoggerFactory;
  * @author Dennis Ju
  */
 public class WindowsNativityControlImpl extends NativityControl {
-
 	@Override
 	public void addFavoritesPath(String path) {
 		WindowsNativityUtil.addFavoritesPath(path);
@@ -78,7 +75,7 @@ public class WindowsNativityControlImpl extends NativityControl {
 			}
 		};
 
-		if(_executor.isShutdown()) {
+		if (_executor.isShutdown()) {
 			_executor = Executors.newCachedThreadPool();
 		}
 		_executor.execute(runnable);
@@ -100,7 +97,9 @@ public class WindowsNativityControlImpl extends NativityControl {
 				try {
 					final InetSocketAddress socketAddress = new InetSocketAddress(InetAddress.getLoopbackAddress(), _port);
 					_serverSocket.bind(socketAddress, 50);
-					RegistryUtil.writeRegistry(Constants.NATIVITY_REGISTRY_KEY, Constants.PORT_REGISTRY_NAME, _port);
+					RegistryUtil.writeRegistry(
+						WindowsNativityUtil.getRegistryKey(),
+						Constants.PORT_REGISTRY_NAME, _port);
 					return true;
 				}
 				catch (IOException ioe) {
@@ -192,7 +191,7 @@ public class WindowsNativityControlImpl extends NativityControl {
 			String foldersJson = _objectMapper.writeValueAsString(folders);
 
 			RegistryUtil.writeRegistry(
-				Constants.NATIVITY_REGISTRY_KEY,
+				WindowsNativityUtil.getRegistryKey(),
 				Constants.FILTER_FOLDERS_REGISTRY_NAME, foldersJson);
 		}
 		catch (JsonProcessingException jpe) {

@@ -14,6 +14,7 @@
 
 package com.liferay.nativity.control.win;
 
+import com.liferay.nativity.Constants;
 import com.liferay.nativity.util.OSDetector;
 
 import org.slf4j.Logger;
@@ -24,7 +25,6 @@ import org.slf4j.LoggerFactory;
  * @author Dennis Ju
  */
 public class WindowsNativityUtil {
-
 	public static native boolean addFavoritesPath(String folder);
 
 	public static boolean load() {
@@ -46,6 +46,14 @@ public class WindowsNativityUtil {
 	public static native boolean setSystemFolder(String folder);
 
 	public static native boolean updateExplorer(String filePath);
+
+	public static void setBaseRegistryPrefix(final String newPrefix) {
+		baseRegistryPrefix = newPrefix;
+	}
+
+	public static String getRegistryKey() {
+		return String.format(REGISTRYKEY_FORMAT, Constants.NATIVITY_REGISTRY_KEY, baseRegistryPrefix);
+	}
 
 	private static void _load() {
 		if (!OSDetector.isMinimumWindowsVersion(OSDetector.WIN_VISTA)) {
@@ -72,10 +80,12 @@ public class WindowsNativityUtil {
 
 	private static final String _NATIVITY_DLL_NAME =
 		"LiferayNativityWindowsUtil";
+	private static final String REGISTRYKEY_FORMAT = "$1%s\\$2%s";
 
 	private static Logger _logger = LoggerFactory.getLogger(
 		WindowsNativityUtil.class.getName());
 
 	private static boolean _loaded = false;
+	private static String baseRegistryPrefix;
 
 }

@@ -41,14 +41,14 @@ public class WindowsFileIconControlImpl extends FileIconControlBase {
 	@Override
 	public void disableFileIcons() {
 		RegistryUtil.writeRegistry(
-			Constants.NATIVITY_REGISTRY_KEY,
+			WindowsNativityUtil.getRegistryKey(),
 			Constants.ENABLE_OVERLAY_REGISTRY_NAME, 0);
 	}
 
 	@Override
 	public void enableFileIcons() {
 		RegistryUtil.writeRegistry(
-			Constants.NATIVITY_REGISTRY_KEY,
+			WindowsNativityUtil.getRegistryKey(),
 			Constants.ENABLE_OVERLAY_REGISTRY_NAME, 1);
 	}
 
