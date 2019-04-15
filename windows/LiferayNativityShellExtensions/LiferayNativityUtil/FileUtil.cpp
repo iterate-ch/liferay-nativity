@@ -30,7 +30,7 @@ bool FileUtil::IsChildFile(const wchar_t* rootFolder, const wchar_t* file)
 	return false;
 }
 
-bool FileUtil::IsFileFiltered(const wchar_t* file)
+bool FileUtil::IsFileFiltered(HKEY hkey, const wchar_t* file)
 {
 	wstring* rootFolder = new wstring();
 

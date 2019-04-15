@@ -24,16 +24,122 @@ extern HINSTANCE instanceHandle;
 #define IDM_DISPLAY 0
 #define IDB_OK 101
 
-LiferayNativityOverlay::LiferayNativityOverlay() : _referenceCount(1)
+struct HKEY_Deleter
 {
-	_communicationSocket = new CommunicationSocket();
+	void operator()(HKEY hkey)
+	{
+		::RegCloseKey(hkey);
+	}
+};
+
+typedef std::unique_ptr<HKEY__, HKEY_Deleter> HKEYPTR;
+
+HKEYPTR FindImplementation(const wchar_t* filePath) {
+	HKEY hkey;
+	// open root key.
+	if (FAILED(RegOpenKeyEx(HKEY_CURRENT_USER, REGISTRY_ROOT_KEY, NULL, KEY_READ, &hkey))) {
+		return false;
+	}
+	HKEYPTR rootKey(hkey);
+
+	DWORD subkeyCount;
+	DWORD subkeyMaxLen;
+
+	// Query for subkey length
+	if (FAILED(
+		RegQueryInfoKey(
+			/* hKey */ rootKey.get(),
+			/* lpClass */ NULL,
+			/* lpcchClass*/ NULL,
+			/* lpReserved */ NULL,
+			/* lpcSubKeys */ &subkeyCount,
+			/* lpcbMaxSubKeyLen */ &subkeyMaxLen,
+			/* lpcbMaxClassLen */ NULL,
+			/* lpcValues */ NULL,
+			/* lpcbMaxValueNameLen */ NULL,
+			/* lpcbMaxValueLen */ NULL,
+			/* lpcbSecurityDescriptor */ NULL,
+			/* lpftLastWriteTime */ NULL))) {
+		return false;
+	}
+
+	HKEYPTR subKey;
+	unique_ptr<CHAR[]> name(new char[subkeyMaxLen]);
+	wchar_t value[4096];
+	DWORD value_length = 4096;
+	// open each and every one of them
+	for (int i = 0; i < subkeyCount; i++)
+	{
+		// try get name
+		if (FAILED(
+			RegEnumKeyExA(
+				/* hKey */ rootKey.get(),
+				/* dwIndex */ i,
+				/* lpName */ name.get(),
+				/* lpcchName */ &subkeyMaxLen,
+				/* lpReserved */ NULL,
+				/* lpClass */ NULL,
+				/* lpcchClass */ NULL,
+				/* lpftLastWriteTime */ NULL))) {
+			continue;
+		}
+		// open subkey
+		if (FAILED(
+			RegOpenKeyEx(
+				/* hKey */ rootKey.get(),
+				/* lpSubKey */ (LPCWSTR)name.get(),
+				/* ulOptions */ NULL,
+				/* samDesired */ KEY_READ,
+				/* phkResult */ &hkey))) {
+			continue;
+		}
+		subKey = HKEYPTR(hkey);
+
+		// read filter folders
+		// this performs json parsing early.
+		if (FAILED(
+			RegQueryValueEx(
+				rootKey.get(),
+				(LPCWSTR)REGISTRY_FILTER_FOLDERS,
+				NULL,
+				NULL,
+				(LPBYTE)value,
+				&value_length))) {
+			continue;
+		}
+
+		Json::Reader jsonReader;
+		Json::Value jsonFilterFolders;
+
+		// not parsed correctly. skip.
+		if (!jsonReader.parse(StringUtil::toString(value), jsonFilterFolders))
+		{
+			continue;
+		}
+
+		// ignore empty filter folders
+		if (jsonFilterFolders.size() == 0) {
+			continue;
+		}
+
+		for (unsigned int i = 0; i < jsonFilterFolders.size(); i++)
+		{
+			auto string = jsonFilterFolders[i].asString();
+			if (FileUtil::IsChildFile(StringUtil::toWstring(string).c_str(), filePath))
+			{
+				// it is a child.
+				// use it.
+				subKey = HKEYPTR(hkey);
+				break;
+			}
+		}
+	}
+	// this will be uninitialized if not set.
+	return subKey;
 }
 
-LiferayNativityOverlay::~LiferayNativityOverlay(void)
+LiferayNativityOverlay::LiferayNativityOverlay() : _referenceCount(1)
 {
-	if (_communicationSocket != nullptr) {
-		delete _communicationSocket;
-	}
 }
 
 IFACEMETHODIMP_(ULONG) LiferayNativityOverlay::AddRef()
@@ -45,7 +151,7 @@ IFACEMETHODIMP LiferayNativityOverlay::QueryInterface(REFIID riid, void** ppv)
 {
 	HRESULT hResult = S_OK;
 
-	if (IsEqualIID(IID_IUnknown, riid) ||  IsEqualIID(IID_IShellIconOverlayIdentifier, riid))
+	if (IsEqualIID(IID_IUnknown, riid) || IsEqualIID(IID_IShellIconOverlayIdentifier, riid))
 	{
 		*ppv = static_cast<IShellIconOverlayIdentifier*>(this);
 	}
@@ -83,17 +189,24 @@ IFACEMETHODIMP LiferayNativityOverlay::GetPriority(int* pPriority)
 
 IFACEMETHODIMP LiferayNativityOverlay::IsMemberOf(PCWSTR pwszPath, DWORD dwAttrib)
 {
-	if (!_IsOverlaysEnabled())
+	HKEYPTR hkey = FindImplementation(pwszPath);
+	if (!hkey) {
+		return MAKE_HRESULT(S_FALSE, 0, 0);
+	}
+
+	if (!_IsOverlaysEnabled(hkey.get()))
 	{
 		return MAKE_HRESULT(S_FALSE, 0, 0);
 	}
 
-	if (!FileUtil::IsFileFiltered(pwszPath))
+	// FindImplementation does this already …
+	if (!FileUtil::IsFileFiltered(hkey.get(), pwszPath))
 	{
 		return MAKE_HRESULT(S_FALSE, 0, 0);
 	}
 
-	if (!_IsMonitoredFileState(pwszPath))
+	CommunicationSocket socket(hkey.get());
+	if (!_IsMonitoredFileState(socket, pwszPath))
 	{
 		return MAKE_HRESULT(S_FALSE, 0, 0);
 	}
@@ -117,25 +230,20 @@ IFACEMETHODIMP LiferayNativityOverlay::GetOverlayInfo(PWSTR pwszIconFile, int cc
 	return S_OK;
 }
 
-bool LiferayNativityOverlay::_IsOverlaysEnabled()
+bool LiferayNativityOverlay::_IsOverlaysEnabled(HKEY hkey)
 {
-	int* enable = new int();
-	bool success = false;
-
-	if (RegistryUtil::ReadRegistry(REGISTRY_ROOT_KEY, REGISTRY_ENABLE_OVERLAY, enable))
-	{
-		if (enable)
-		{
-			success = true;
-		}
+	wchar_t value[4096];
+	DWORD value_length = 4096;
+	if (FAILED(
+		RegQueryValueEx(
+			hkey, REGISTRY_ENABLE_OVERLAY, NULL, NULL, (LPBYTE)value, &value_length))) {
+		return false;
 	}
 
-	delete enable;
-
-	return success;
+	return stoi((wstring)value);
 }
 
-bool LiferayNativityOverlay::_IsMonitoredFileState(const wchar_t* filePath)
+bool LiferayNativityOverlay::_IsMonitoredFileState(CommunicationSocket& socket, const wchar_t* filePath)
 {
 	bool needed = false;
 
@@ -152,7 +260,7 @@ bool LiferayNativityOverlay::_IsMonitoredFileState(const wchar_t* filePath)
 
 	wstring* response = new wstring();
 
-	if (!_communicationSocket->SendMessageReceiveResponse(message->c_str(), response))
+	if (!socket.SendMessageReceiveResponse(message->c_str(), response))
 	{
 		delete message;
 		delete response;

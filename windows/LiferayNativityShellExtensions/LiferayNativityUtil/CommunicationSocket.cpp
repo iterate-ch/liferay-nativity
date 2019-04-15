@@ -24,7 +24,7 @@ using namespace std;
 
 #define DEFAULT_BUFLEN 4096
 
-bool connect(int &port, SOCKET &clientSocket, sockaddr_in &clientService, bool retry) {
+bool connect(HKEY hkey, int &port, SOCKET &clientSocket, sockaddr_in &clientService, bool retry) {
 	clientSocket = INVALID_SOCKET;
 	clientSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if (clientSocket == INVALID_SOCKET) {
@@ -44,18 +44,23 @@ bool connect(int &port, SOCKET &clientSocket, sockaddr_in &clientService, bool r
 
 		closesocket(clientSocket);
 		if (retry) {
-			unique_ptr<int> tempPort = make_unique<int>();
+			int tempPort;
 
-			if (!RegistryUtil::ReadRegistry(REGISTRY_ROOT_KEY, REGISTRY_PORT, tempPort.get())) {
+			wchar_t value[4096];
+			DWORD value_length = 4096;
+			if (FAILED(
+				RegQueryValueEx(
+					hkey, REGISTRY_PORT, NULL, NULL, (LPBYTE)value, &value_length))) {
+				return false;
+			}
+			tempPort = stoi((wstring)value);
+
+			if (tempPort == port) {
 				return false;
 			}
 
-			if (*tempPort == port) {
-				return false;
-			}
-
-			port = *tempPort;
-			return connect(port, clientSocket, clientService, false);
+			port = tempPort;
+			return connect(hkey, port, clientSocket, clientService, false);
 		}
 		else {
 			return false;
@@ -65,7 +70,7 @@ bool connect(int &port, SOCKET &clientSocket, sockaddr_in &clientService, bool r
 	return true;
 }
 
-CommunicationSocket::CommunicationSocket() : _port(0)
+CommunicationSocket::CommunicationSocket(HKEY hkey) : _hkey(hkey)
 {
 	WSADATA wsaData;
 
@@ -87,7 +92,7 @@ bool CommunicationSocket::ReceiveResponseOnly(wstring* message)
 	SOCKET clientSocket;
 	struct sockaddr_in clientService;
 
-	if (!connect(_port, clientSocket, clientService, true)) {
+	if (!connect(_hkey, _port, clientSocket, clientService, true)) {
 		return false;
 	}
 
@@ -161,7 +166,7 @@ bool CommunicationSocket::SendMessageReceiveResponse(const wchar_t* message, wst
 	SOCKET clientSocket;
 	struct sockaddr_in clientService;
 
-	if (!connect(_port, clientSocket, clientService, true)) {
+	if (!connect(_hkey, _port, clientSocket, clientService, true)) {
 		return false;
 	}
 

@@ -28,7 +28,7 @@
 class __declspec(dllexport) CommunicationSocket
 {
 	public:
-		CommunicationSocket();
+		CommunicationSocket(HKEY hkey);
 		~CommunicationSocket();
 
 		bool ReceiveResponseOnly(std::wstring*);
@@ -38,6 +38,7 @@ class __declspec(dllexport) CommunicationSocket
 	private:
 		bool _ConvertData(wchar_t* buf, int bytesRead, char* rec_buf);
 
+		HKEY _hkey;
 		int _port;
 };
 

@@ -19,17 +19,11 @@ using namespace std;
 
 ContextMenuUtil::ContextMenuUtil() : _menuList(0)
 {
-	_communicationSocket = new CommunicationSocket();
 	_selectedFiles = new vector<wstring>;
 }
 
 ContextMenuUtil::~ContextMenuUtil(void)
 {
-	if (_communicationSocket != 0)
-	{
-		delete _communicationSocket;
-	}
-
 	if (_menuList != 0)
 	{
 		delete _menuList;

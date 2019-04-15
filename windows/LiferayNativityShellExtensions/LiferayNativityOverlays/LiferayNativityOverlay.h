@@ -44,17 +44,12 @@ class LiferayNativityOverlay : public IShellIconOverlayIdentifier
 
 		IFACEMETHODIMP_(ULONG) Release();
 
-	protected:
-		~LiferayNativityOverlay(void);
-
 	private:
-		bool _IsOverlaysEnabled();
+		bool _IsOverlaysEnabled(HKEY hkey);
 
-		bool _IsMonitoredFileState(const wchar_t* filePath);
+		bool _IsMonitoredFileState(CommunicationSocket& socket, const wchar_t* filePath);
 
 		long _referenceCount;
-
-		CommunicationSocket* _communicationSocket;
 };
 
 #endif

@@ -35,7 +35,7 @@ class __declspec(dllexport) FileUtil
 
 		static bool IsChildFile(const wchar_t*, const wchar_t*);
 
-		static bool IsFileFiltered(const wchar_t*);
+		static bool IsFileFiltered(HKEY hkey, const wchar_t*);
 
 	private:
 };
