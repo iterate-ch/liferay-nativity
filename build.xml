@@ -53,8 +53,6 @@
 		>
 			<arg value="LiferayNativityUtil" />
 			<arg value="${basedir}/windows" />
-			<arg value="${ms.sdk.7.1.dir}" />
-			<arg value="${framework.dir}" />
 		</exec>
 
 		<copy
@@ -79,8 +77,6 @@
 		>
 			<arg value="LiferayNativityWindowsUtil" />
 			<arg value="${basedir}/windows" />
-			<arg value="${ms.sdk.7.1.dir}" />
-			<arg value="${framework.dir}" />
 		</exec>
 
 		<copy
@@ -125,8 +121,6 @@
 		>
 			<arg value="LiferayNativityContextMenus" />
 			<arg value="${basedir}/windows" />
-			<arg value="${ms.sdk.7.1.dir}" />
-			<arg value="${framework.dir}" />
 		</exec>
 
 		<copy
@@ -171,8 +165,6 @@
 		>
 			<arg value="LiferayNativityOverlays" />
 			<arg value="${basedir}/windows" />
-			<arg value="${ms.sdk.7.1.dir}" />
-			<arg value="${framework.dir}" />
 		</exec>
 
 		<copy
