@@ -20,7 +20,6 @@ import com.liferay.nativity.control.NativityControl;
 import com.liferay.nativity.control.NativityMessage;
 import com.liferay.nativity.modules.fileicon.FileIconControl;
 import com.liferay.nativity.modules.fileicon.FileIconControlCallback;
-import com.liferay.nativity.util.StringUtil;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -84,8 +83,6 @@ public class FSFileIconControlImpl implements FileIconControl {
 
 	@Override
 	public int getIconForFile(String path) {
-		path = StringUtil.normalize(path);
-
 		return fileIconControlCallback.getIconForFile(path);
 	}
 

@@ -18,7 +18,6 @@ import com.liferay.nativity.Constants;
 import com.liferay.nativity.control.MessageListener;
 import com.liferay.nativity.control.NativityControl;
 import com.liferay.nativity.control.NativityMessage;
-import com.liferay.nativity.util.StringUtil;
 
 import java.util.List;
 
@@ -63,8 +62,6 @@ public abstract class FileIconControlBase implements FileIconControl {
 
 	@Override
 	public int getIconForFile(String path) {
-		path = StringUtil.normalize(path);
-
 		return fileIconControlCallback.getIconForFile(path);
 	}
 

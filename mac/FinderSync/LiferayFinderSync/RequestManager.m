@@ -367,8 +367,7 @@ static RequestManager* sharedInstance = nil;
 
 - (void) refreshBadges:(NSArray*)paths {
     for (NSString* path in paths) {
-		NSString* normalizedPath = [path decomposedStringWithCanonicalMapping];
-        [self requestFileBadgeId:[NSURL fileURLWithPath:normalizedPath]];
+        [self requestFileBadgeId:[NSURL fileURLWithPath:path]];
     }
 }
 
@@ -545,8 +544,6 @@ static RequestManager* sharedInstance = nil;
 	NSDictionary* dictionary = (NSDictionary*)cmdData;
 
 	for (NSString* path in dictionary) {
-		NSString* normalizedPath = [path decomposedStringWithCanonicalMapping];
-
 		NSNumber* badgeId = dictionary[path];
 
 		NSString* badgeIdString = nil;
@@ -558,7 +555,7 @@ static RequestManager* sharedInstance = nil;
 			badgeIdString = [badgeId stringValue];
 		}
 
-		NSURL* url = [NSURL fileURLWithPath:normalizedPath];
+		NSURL* url = [NSURL fileURLWithPath:path];
 
 		[[FIFinderSyncController defaultController] setBadgeIdentifier:badgeIdString forURL:url];
 	}
