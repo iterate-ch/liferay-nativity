@@ -43,6 +43,7 @@ import io.netty.util.concurrent.GlobalEventExecutor;
 import java.io.File;
 import java.io.PrintWriter;
 
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 
 import java.util.Collections;
@@ -107,7 +108,7 @@ public class FSNativityControlImpl extends NativityControl {
 
 			serverBootstrap.childOption(ChannelOption.SO_KEEPALIVE, true);
 
-			ChannelFuture channelFuture = serverBootstrap.bind(0).sync();
+			ChannelFuture channelFuture = serverBootstrap.bind(InetAddress.getLoopbackAddress(), 0).sync();
 
 			InetSocketAddress inetSocketAddress =
 				(InetSocketAddress)channelFuture.channel().localAddress();
