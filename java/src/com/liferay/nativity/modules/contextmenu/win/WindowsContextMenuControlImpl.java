@@ -65,12 +65,22 @@ public class WindowsContextMenuControlImpl extends ContextMenuControl {
 
 				String uuid = (String)map.get(Constants.UUID);
 
+				Number hwnd = null;
+				if (map.containsKey(Constants.HWND)) {
+					if ("x86" == System.getProperty("os.arch")) {
+						hwnd = (Integer)map.get(Constants.HWND);
+					}
+					else {
+						hwnd = (Long)map.get(Constants.HWND);
+					}
+				}
+
 				@SuppressWarnings("unchecked")
 				List<String> files = (List<String>)map.get(Constants.FILES);
 
 				String[] filesArray = files.toArray(new String[files.size()]);
 
-				fireContextMenuAction(uuid, filesArray);
+				fireContextMenuAction(uuid, hwnd, filesArray);
 
 				return null;
 			}

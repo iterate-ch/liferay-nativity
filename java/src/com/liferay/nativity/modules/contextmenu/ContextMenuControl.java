@@ -38,12 +38,12 @@ public abstract class ContextMenuControl implements ContextMenuControlCallback {
 		contextMenuItems = new CopyOnWriteArrayList<>();
 	}
 
-	public void fireContextMenuAction(String uuid, String[] paths) {
+	public void fireContextMenuAction(String uuid, Number window, String[] paths) {
 		for (ContextMenuItem contextMenuItem : contextMenuItems) {
 			if (contextMenuItem.getUuid().equals(uuid)) {
 				_logger.trace("Firing action uuid: {} for: {}", uuid, paths);
 
-				contextMenuItem.fireContextMenuAction(paths);
+				contextMenuItem.fireContextMenuAction(paths, window);
 
 				break;
 			}
