@@ -67,12 +67,7 @@ public class WindowsContextMenuControlImpl extends ContextMenuControl {
 
 				Number hwnd = null;
 				if (map.containsKey(Constants.HWND)) {
-					if ("x86" == System.getProperty("os.arch")) {
-						hwnd = (Integer)map.get(Constants.HWND);
-					}
-					else {
-						hwnd = (Long)map.get(Constants.HWND);
-					}
+					hwnd = (Number)map.get(Constants.HWND);
 				}
 
 				@SuppressWarnings("unchecked")
