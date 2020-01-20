@@ -56,7 +56,7 @@ public class ContextMenuItem {
 		_contextMenuItems.add(index, _getSeparator());
 	}
 
-	public void fireContextMenuAction(String[] paths, Number window) {
+	public void fireContextMenuAction(String[] paths, Object window) {
 		if (_contextMenuAction != null) {
 			_contextMenuAction.onSelection(paths, window);
 		}

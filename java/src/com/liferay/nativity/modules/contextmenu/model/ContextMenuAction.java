@@ -24,6 +24,6 @@ public interface ContextMenuAction {
 	 *
 	 * @param paths array of selected file paths
 	 */
-	void onSelection(String[] paths, Number window);
+	void onSelection(String[] paths, Object window);
 
 }
