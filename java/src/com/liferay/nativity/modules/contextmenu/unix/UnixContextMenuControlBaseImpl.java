@@ -74,7 +74,7 @@ public abstract class UnixContextMenuControlBaseImpl
 
 				String[] filesArray = files.toArray(new String[files.size()]);
 
-				fireContextMenuAction(uuid, filesArray);
+				fireContextMenuAction(uuid, null, filesArray);
 
 				return null;
 			}

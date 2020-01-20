@@ -32,6 +32,8 @@ public class Constants {
 
 	public static final String FILES = "files";
 
+	public static final String HWND = "hwnd";
+
 	public static final String FILTER_FOLDERS_REGISTRY_NAME = "FilterFolders";
 
 	public static final String FIRE_CONTEXT_MENU_ACTION = "contextMenuAction";

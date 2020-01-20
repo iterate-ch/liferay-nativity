@@ -32,4 +32,5 @@
 #define NATIVITY_ICON_PATH						"iconPath"
 #define NATIVITY_TITLE							"title"
 #define NATIVITY_UUID							"uuid"
+#define NATIVITY_HWND							"hwnd"
 #define NATIVITY_VALUE							"value"

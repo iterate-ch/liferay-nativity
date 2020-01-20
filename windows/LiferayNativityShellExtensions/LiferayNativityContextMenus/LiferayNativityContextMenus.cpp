@@ -190,7 +190,7 @@ IFACEMETHODIMP LiferayNativityContextMenus::InvokeCommand(LPCMINVOKECOMMANDINFO 
 		return E_FAIL;
 	}
 
-	if (!_contextMenuUtil->PerformAction(index))
+	if (!_contextMenuUtil->PerformAction(index, pici->hwnd))
 	{
 		return E_FAIL;
 	}

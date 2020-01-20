@@ -272,7 +272,7 @@ bool ContextMenuUtil::GetContextMenuAction(int action, ContextMenuAction** item)
 	return false;
 }
 
-bool ContextMenuUtil::PerformAction(int command)
+bool ContextMenuUtil::PerformAction(int command, HWND hWnd)
 {
 	ContextMenuItem* contextMenuItem;
 
@@ -284,6 +284,11 @@ bool ContextMenuUtil::PerformAction(int command)
 	Json::Value jsonValue;
 
 	jsonValue[NATIVITY_UUID] = StringUtil::toString(contextMenuItem->GetUuid()->c_str());
+#ifdef _WIN64
+	jsonValue[NATIVITY_HWND] = (int64_t)hWnd;
+#else
+	jsonValue[NATIVITY_HWND] = (int32_t)hWnd;
+#endif
 
 	for (vector<wstring>::iterator it = _selectedFiles->begin(); it != _selectedFiles->end(); it++)
 	{

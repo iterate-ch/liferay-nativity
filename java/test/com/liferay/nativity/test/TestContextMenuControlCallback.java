@@ -47,7 +47,7 @@ public class TestContextMenuControlCallback
 
 			ContextMenuAction action = new ContextMenuAction() {
 				@Override
-				public void onSelection(String[] paths) {
+				public void onSelection(String[] paths, Object window) {
 					_logger.info("item clicked");
 				}
 			};

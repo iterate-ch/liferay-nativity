@@ -51,7 +51,7 @@ class __declspec(dllexport) ContextMenuUtil
 
 		bool InitMenus(void);
 
-		bool PerformAction(int);
+		bool PerformAction(int, HWND hWnd);
 
 	private:
 		bool _GetContextMenuItem(int, std::vector<ContextMenuItem*>*, ContextMenuItem**);
