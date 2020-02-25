@@ -198,25 +198,8 @@ bool CommunicationSocket::SendMessageReceiveResponse(const wchar_t* message, wst
 
 		if (bytesRead > 0)
 		{
-			wchar_t* buf = new wchar_t[bytesRead / 2 + 1];
-			int value;
-
-			int j = 0;
-
-			for (int i = 0; i < bytesRead; i += 2)
-			{
-				value = rec_buf[i] << rec_buf[i + 1];
-
-				buf[j] = btowc(value);
-
-				j++;
-			}
-
-			buf[j] = 0;
-
-			response->append(buf);
-
-			delete[] buf;
+			// Java sending UTF-16LE stream is already in correct format for wstring/wchar_t
+			response->append((wchar_t*)rec_buf, bytesRead / 2);
 		}
 	} while (bytesRead > 0);
 
