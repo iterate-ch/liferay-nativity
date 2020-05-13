@@ -36,8 +36,6 @@ class __declspec(dllexport) CommunicationSocket
 		bool SendMessageReceiveResponse(const wchar_t*, std::wstring*);
 
 	private:
-		bool _ConvertData(wchar_t* buf, int bytesRead, char* rec_buf);
-
 		int _port;
 };
 
