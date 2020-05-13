@@ -100,25 +100,8 @@ bool CommunicationSocket::ReceiveResponseOnly(wstring* message)
 
 		if (bytesRead > 0)
 		{
-			wchar_t* buf = new wchar_t[bytesRead / 2 + 1];
-			int value;
-
-			int j = 0;
-
-			for (int i = 0; i < bytesRead; i += 2)
-			{
-				value = rec_buf[i] << rec_buf[i + 1];
-
-				buf[j] = btowc(value);
-
-				j++;
-			}
-
-			buf[j] = 0;
-
-			message->append(buf);
-
-			delete[] buf;
+			// Java sending UTF-16LE stream is already in correct format for wstring/wchar_t
+			message->append((wchar_t*)rec_buf, bytesRead / 2);
 		}
 	} while (bytesRead > 0);
 
@@ -134,24 +117,6 @@ bool CommunicationSocket::ReceiveResponseOnly(wstring* message)
 	}
 
 	closesocket(clientSocket);
-
-	return true;
-}
-
-bool CommunicationSocket::_ConvertData(wchar_t* buf, int bytesRead, char* rec_buf)
-{
-	int value;
-
-	int j = 0;
-
-	for (int i = 0; i < bytesRead; i += 2)
-	{
-		value = rec_buf[i] << rec_buf[i + 1];
-
-		buf[j] = btowc(value);
-
-		j++;
-	}
 
 	return true;
 }
