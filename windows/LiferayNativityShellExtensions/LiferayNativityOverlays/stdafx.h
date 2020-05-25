@@ -28,3 +28,5 @@
 #include <unknwn.h>
 #include <vector>
 #include <strsafe.h>
+
+#include "Utils.h"

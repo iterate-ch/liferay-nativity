@@ -76,6 +76,7 @@ IFACEMETHODIMP_(ULONG) LiferayNativityOverlay::Release()
 
 IFACEMETHODIMP LiferayNativityOverlay::GetPriority(int* pPriority)
 {
+	Utils::Log(L"NONE: Get Priority");
 	pPriority = 0;
 
 	return S_OK;
@@ -83,6 +84,7 @@ IFACEMETHODIMP LiferayNativityOverlay::GetPriority(int* pPriority)
 
 IFACEMETHODIMP LiferayNativityOverlay::IsMemberOf(PCWSTR pwszPath, DWORD dwAttrib)
 {
+	Utils::Log(L"ENTER: IsMemberOf");
 	if (!_IsOverlaysEnabled())
 	{
 		return MAKE_HRESULT(S_FALSE, 0, 0);
@@ -97,12 +99,13 @@ IFACEMETHODIMP LiferayNativityOverlay::IsMemberOf(PCWSTR pwszPath, DWORD dwAttri
 	{
 		return MAKE_HRESULT(S_FALSE, 0, 0);
 	}
-
+	Utils::Log(L"EXIT: IsMemberOf");
 	return MAKE_HRESULT(S_OK, 0, 0);
 }
 
 IFACEMETHODIMP LiferayNativityOverlay::GetOverlayInfo(PWSTR pwszIconFile, int cchMax, int* pIndex, DWORD* pdwFlags)
 {
+	Utils::Log(L"ENTER: GetOverlayInfo");
 	*pIndex = 0;
 
 	*pdwFlags = ISIOI_ICONFILE | ISIOI_ICONINDEX;
@@ -113,7 +116,7 @@ IFACEMETHODIMP LiferayNativityOverlay::GetOverlayInfo(PWSTR pwszIconFile, int cc
 
 		return hResult;
 	}
-
+	Utils::Log(L"EXIT: GetOverlayInfo");
 	return S_OK;
 }
 

@@ -15,24 +15,51 @@
 #include "NativityOverlayRegistrationHandler.h"
 #include "NativityOverlayFactory.h"
 #include "stdafx.h"
+#include <PathCch.h>
+#include <string>
+#include <sstream>
+#include <filesystem>
+
+#pragma comment(lib, "Pathcch.lib")
 
 HINSTANCE instanceHandle = NULL;
+std::wstring logFilePath;
 
 long dllReferenceCount = 0;
 
+void CreateLogFile(HMODULE hModule)
+{
+	PWSTR desktopPathName;
+	SHGetKnownFolderPath(FOLDERID_Desktop, 0, NULL, &desktopPathName);
+	std::experimental::filesystem::path desktopPath(desktopPathName);
+	CoTaskMemFree(desktopPathName);
+
+	std::vector<wchar_t> filename = std::vector<wchar_t>();
+	filename.resize(MAX_PATH);
+	while (!GetModuleFileName(hModule, filename.data(), filename.size()) || GetLastError() == ERROR_INSUFFICIENT_BUFFER) {
+		filename.resize(filename.size() * 2);
+	}
+	if (SUCCEEDED(GetLastError())) {
+		std::experimental::filesystem::path filenamePath(filename.data());
+		filenamePath = filenamePath.replace_extension(L"log");
+		auto logFile{ desktopPath.append(filenamePath.filename()) };
+		logFilePath = logFile.wstring();
+	}
+}
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD dwReason, LPVOID lpReserved)
 {
 	switch (dwReason)
 	{
-		case DLL_PROCESS_ATTACH:
-			instanceHandle = hModule;
-			DisableThreadLibraryCalls(hModule);
-			break;
-		case DLL_THREAD_ATTACH:
-		case DLL_THREAD_DETACH:
-		case DLL_PROCESS_DETACH:
-			break;
+	case DLL_PROCESS_ATTACH:
+		instanceHandle = hModule;
+		DisableThreadLibraryCalls(hModule);
+		CreateLogFile(hModule);
+		break;
+	case DLL_THREAD_ATTACH:
+	case DLL_THREAD_DETACH:
+	case DLL_PROCESS_DETACH:
+		break;
 	}
 
 	return TRUE;
