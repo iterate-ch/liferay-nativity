@@ -50,10 +50,6 @@ bool connect(int &port, SOCKET &clientSocket, sockaddr_in &clientService, bool r
 				return false;
 			}
 
-			if (*tempPort == port) {
-				return false;
-			}
-
 			port = *tempPort;
 			return connect(port, clientSocket, clientService, false);
 		}
