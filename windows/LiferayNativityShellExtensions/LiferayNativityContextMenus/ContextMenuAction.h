@@ -12,10 +12,10 @@
  * details.
  */
 
-#ifndef CONTEXTMENUACTION_H
-#define CONTEXTMENUACTION_H
+#pragma once
 
-#include "stdafx.h"
+#include <string>
+#include <vector>
 
 class __declspec(dllexport) ContextMenuAction
 {
@@ -32,5 +32,3 @@ class __declspec(dllexport) ContextMenuAction
 		std::vector<std::wstring>* _files;
 		std::wstring* _uuid;
 };
-
-#endif

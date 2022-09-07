@@ -12,19 +12,13 @@
  * details.
  */
 
-#ifndef LIFERAYNATIVITYCONTEXTMENUS_H
-#define LIFERAYNATIVITYCONTEXTMENUS_H
-
 #pragma once
 
-#include "ContextMenuAction.h"
-#include "ContextMenuConstants.h"
-#include "ContextMenuUtil.h"
-#include <atlbase.h>
+#include <ShlObj.h>
 #include <gdiplus.h>
-#include <shlobj.h>
-#include <uxtheme.h>
-#include <windows.h>
+#include <Uxtheme.h>
+#include "ContextMenuItem.h"
+#include "ContextMenuUtil.h"
 
 using namespace std;
 
@@ -83,5 +77,3 @@ class LiferayNativityContextMenus : public IShellExtInit, public IContextMenu
 
 		UINT _nFiles;
 };
-
-#endif

@@ -12,20 +12,7 @@
  * details.
  */
 
-#ifndef FILEUTIL_H
-#define FILEUTIL_H
-
 #pragma once
-
-#pragma warning (disable : 4251)
-
-#include "RegistryUtil.h"
-#include "StringUtil.h"
-#include "UtilConstants.h"
-#include "json/json.h"
-
-#include <string>
-#include <vector>
 
 class __declspec(dllexport) FileUtil
 {
@@ -39,5 +26,3 @@ class __declspec(dllexport) FileUtil
 
 	private:
 };
-
-#endif

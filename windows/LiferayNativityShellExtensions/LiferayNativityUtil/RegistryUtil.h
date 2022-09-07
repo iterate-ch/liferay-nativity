@@ -12,15 +12,9 @@
  * details.
  */
 
-#ifndef REGISTRYUTIL_H
-#define REGISTRYUTIL_H
-
 #pragma once
 
-#pragma warning (disable : 4251)
-
 #include <string>
-#include <windows.h>
 
 class __declspec(dllexport) RegistryUtil
 {
@@ -32,5 +26,3 @@ class __declspec(dllexport) RegistryUtil
 
 		static bool ReadRegistry(const wchar_t*,  const wchar_t*, std::wstring*);
 };
-
-#endif

@@ -1,0 +1,5 @@
+<Project>
+  <PropertyGroup>
+    <JAVA_HOME>${JDK_HOME}</JAVA_HOME>
+  </PropertyGroup>
+</Project>

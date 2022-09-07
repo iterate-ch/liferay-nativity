@@ -12,18 +12,11 @@
  *  details.
  */
 
-#ifndef CONFIGURATIONUTIL_H
-#define CONFIGURATIONUTIL_H
-
 #pragma once
 
-#include "ConfigConstants.h"
-#include "com_liferay_nativity_control_win_WindowsNativityUtil.h"
-
-#include <Shlobj.h>
 #include <Windows.h>
-#include <iostream>
 #include <string>
+#include "com_liferay_nativity_control_win_WindowsNativityUtil.h"
 
 class __declspec(dllexport) ConfigurationUtil
 {
@@ -37,5 +30,3 @@ class __declspec(dllexport) ConfigurationUtil
 	private:
 		static HRESULT _CreateLink(LPCWSTR lpszPathObj, LPCWSTR lpszPathLink, LPCWSTR lpszDesc);
 };
-
-#endif

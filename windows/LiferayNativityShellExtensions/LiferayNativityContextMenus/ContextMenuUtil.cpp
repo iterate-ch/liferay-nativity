@@ -12,8 +12,13 @@
  * details.
  */
 
+#include "stdafx.h"
 #include "ContextMenuUtil.h"
+
+#include <FileUtil.h>
 #include <memory>
+#include <StringUtil.h>
+#include <UtilConstants.h>
 
 using namespace std;
 

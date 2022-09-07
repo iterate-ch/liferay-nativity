@@ -12,17 +12,9 @@
  * details.
  */
 
-#ifndef NATIVITYMESSAGE_H
-#define NATIVITYMESSAGE_H
-
-#include "StringUtil.h"
-#include "UtilConstants.h"
-
-#include <fstream>
-#include <iostream>
-#include <string>
-
 #pragma once
+
+#include <string>
 
 class __declspec(dllexport) NativityMessage
 {
@@ -42,5 +34,3 @@ class __declspec(dllexport) NativityMessage
 		std::wstring* _command;
 		std::wstring* _value;
 };
-
-#endif

@@ -12,6 +12,7 @@
 
 	<property name="java.dir" value="${basedir}/java" />
 	<property name="tmp.dir" value="${basedir}/tmp" />
+	<dirname property="JDK_HOME" file="${java.home}" />
 
 	<path id="portal.classpath">
 		<pathelement location="${portal.dir}/portal-impl/classes" />
@@ -44,7 +45,16 @@
 		</jar>
 	</target>
 
-	<target name="build-windows-util">
+	<target name="java-home">
+		<mkdir dir="${tmp.dir}" />
+		<copy file="JavaHome.Build.props" todir="${tmp.dir}" overwrite="true">
+			<filterchain>
+				<expandProperties />
+			</filterchain>
+		</copy>
+	</target>
+
+	<target name="build-windows-util" depends="java-home">
 		<mkdir dir="${basedir}/dist/" />
 
 		<exec
@@ -66,7 +76,7 @@
 		/>
 	</target>
 
-	<target name="build-windows-native-util">
+	<target name="build-windows-native-util" depends="java-home">
 		<mkdir dir="${basedir}/dist/" />
 
 		<antcall target="build-jni-headers" />
@@ -100,7 +110,7 @@
 		/>
 	</target>
 
-	<target name="build-windows-menus">
+	<target name="build-windows-menus" depends="java-home">
 		<mkdir dir="${basedir}/dist/" />
 
 		<copy
@@ -134,7 +144,7 @@
 		/>
 	</target>
 
-	<target name="build-windows-overlays">
+	<target name="build-windows-overlays" depends="java-home">
 		<mkdir dir="${basedir}/dist/" />
 
 		<copy

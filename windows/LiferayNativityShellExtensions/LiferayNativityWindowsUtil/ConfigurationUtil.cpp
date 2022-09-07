@@ -13,10 +13,12 @@
 */
 
 #include "ConfigurationUtil.h"
-#include <atlbase.h>
+#include <ShlObj.h>
 #include <Shlwapi.h>
+#include <winrt/base.h>
 
 using namespace std;
+using namespace winrt;
 
 JNIEXPORT jboolean JNICALL Java_com_liferay_nativity_control_win_WindowsNativityUtil_addFavoritesPath(JNIEnv* env, jclass jclazz, jstring filePath)
 {
@@ -239,52 +241,54 @@ bool ConfigurationUtil::RefreshExplorer(const wchar_t* path)
 
 	for (int i = count - 1; i >= 0; i--)
 	{
-		CComPtr<IDispatch> iDispatch;
-		CComVariant index(i);
+		com_ptr<IDispatch> iDispatch;
+		VARIANT index;
+		VariantInit(&index);
+		V_I4(&index) = i;
 
-		if (FAILED(hResult = iShellWindows->Item(index, &iDispatch)) || hResult == S_FALSE)
+		if (FAILED(hResult = iShellWindows->Item(index, iDispatch.put())) || hResult == S_FALSE)
 		{
 			continue;
 		}
 
-		CComPtr<IWebBrowser2> iWebBrowser2;
+		com_ptr<IWebBrowser2> iWebBrowser2;
 
-		if (FAILED(iDispatch->QueryInterface(IID_IWebBrowser2, (void**)&iWebBrowser2)))
+		if (FAILED(iDispatch->QueryInterface(IID_IWebBrowser2, iWebBrowser2.put_void())))
 		{
 			continue;
 		}
 
-		CComPtr<IServiceProvider> iServiceProvider;
+		com_ptr<IServiceProvider> iServiceProvider;
 
-		if (FAILED(iDispatch->QueryInterface(IID_IServiceProvider, (void**)&iServiceProvider)))
+		if (FAILED(iDispatch->QueryInterface(IID_IServiceProvider, iServiceProvider.put_void())))
 		{
 			continue;
 		}
 
-		CComPtr<IShellBrowser> iShellBrowser;
+		com_ptr<IShellBrowser> iShellBrowser;
 
-		if (FAILED(hResult = iServiceProvider->QueryService(SID_STopLevelBrowser, IID_IShellBrowser, (void**)&iShellBrowser)))
+		if (FAILED(hResult = iServiceProvider->QueryService(SID_STopLevelBrowser, IID_IShellBrowser, iShellBrowser.put_void())))
 		{
 			continue;
 		}
 
-		CComPtr<IShellView> iShellView;
+		com_ptr<IShellView> iShellView;
 
-		if (FAILED(hResult = iShellBrowser->QueryActiveShellView(&iShellView)))
+		if (FAILED(hResult = iShellBrowser->QueryActiveShellView(iShellView.put())))
 		{
 			continue;
 		}
 
-		CComPtr<IFolderView> iFolderView;
+		com_ptr<IFolderView> iFolderView;
 
-		if (FAILED(hResult = iShellView->QueryInterface(IID_IFolderView, (void**)&iFolderView)))
+		if (FAILED(hResult = iShellView->QueryInterface(IID_IFolderView, iFolderView.put_void())))
 		{
 			continue;
 		}
 
-		CComPtr<IPersistFolder2> iPersistFolder2;
+		com_ptr<IPersistFolder2> iPersistFolder2;
 
-		if (FAILED(hResult = iFolderView->GetFolder(IID_IPersistFolder2, (void**)&iPersistFolder2)))
+		if (FAILED(hResult = iFolderView->GetFolder(IID_IPersistFolder2, iPersistFolder2.put_void())))
 		{
 			continue;
 		}
@@ -297,9 +301,9 @@ bool ConfigurationUtil::RefreshExplorer(const wchar_t* path)
 		}
 
 		LPCITEMIDLIST child = NULL;
-		CComPtr<IShellFolder> iShellFolder;
+		com_ptr<IShellFolder> iShellFolder;
 
-		if (FAILED(::SHBindToParent(currentFolder, IID_IShellFolder, (void**)&iShellFolder, &child)))
+		if (FAILED(::SHBindToParent(currentFolder, IID_IShellFolder, iShellFolder.put_void(), &child)))
 		{
 			continue;
 		}

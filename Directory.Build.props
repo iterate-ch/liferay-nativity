@@ -1,0 +1,10 @@
+<Project>
+
+  <PropertyGroup>
+    <CppWinRTVersion>2.0.220608.4</CppWinRTVersion>
+    <WILVersion>1.0.220201.1</WILVersion>
+  </PropertyGroup>
+
+  <Import Project="tmp\JavaHome.Build.props" />
+  
+</Project>

@@ -12,12 +12,15 @@
  * details.
  */
 
+#include "stdafx.h"
 #include "LiferayNativityOverlay.h"
 #include <memory>
+#include <StringUtil.h>
+#include <json/json.h>
+#include "UtilConstants.h"
+#include "OverlayConstants.h"
 
 using namespace std;
-
-#pragma comment(lib, "shlwapi.lib")
 
 extern HINSTANCE instanceHandle;
 

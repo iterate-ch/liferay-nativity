@@ -12,10 +12,10 @@
  * details.
  */
 
-#ifndef CONTEXTMENUITEM_H
-#define CONTEXTMENUITEM_H
+#pragma once
 
-#include "stdafx.h"
+#include <string>
+#include <vector>
 
 class __declspec(dllexport) ContextMenuItem
 {
@@ -80,5 +80,3 @@ class __declspec(dllexport) ContextMenuItem
 
 		std::wstring* _uuid;
 };
-
-#endif

@@ -12,23 +12,13 @@
  * details.
  */
 
-#ifndef CONTEXTMENUUTIL_H
-#define CONTEXTMENUUTIL_H
-
 #pragma once
 
+#include <CommunicationSocket.h>
+#include <json/json.h>
+#include <NativityMessage.h>
 #include "ContextMenuAction.h"
 #include "ContextMenuItem.h"
-#include "ContextMenuConstants.h"
-#include "FileUtil.h"
-#include "NativityMessage.h"
-#include "RegistryUtil.h"
-#include "StringUtil.h"
-#include "UtilConstants.h"
-#include "json/json.h"
-#include "stdafx.h"
-
-#include <vector>
 
 class __declspec(dllexport) ContextMenuUtil
 {
@@ -68,5 +58,3 @@ class __declspec(dllexport) ContextMenuUtil
 
 		std::vector<std::wstring>* _selectedFiles;
 };
-
-#endif

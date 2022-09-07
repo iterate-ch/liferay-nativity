@@ -12,18 +12,9 @@
  *  details.
  */
 
-#ifndef STRINGUTIL_H
-#define STRINGUTIL_H
-
 #pragma once
 
 #include <string>
-#include <vector>
-#include <map>
-
-#include "UtilConstants.h"
-
-#include <codecvt>
 
 class __declspec(dllexport) StringUtil
 {
@@ -35,5 +26,3 @@ class __declspec(dllexport) StringUtil
 
 		static std::wstring toWstring(const std::string&);
 };
-
-#endif

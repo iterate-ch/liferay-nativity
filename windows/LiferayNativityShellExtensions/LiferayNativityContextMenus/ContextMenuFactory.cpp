@@ -12,7 +12,9 @@
  * details.
  */
 
+#include "stdafx.h"
 #include "ContextMenuFactory.h"
+#include "LiferayNativityContextMenus.h"
 
 extern long dllReferenceCount;
 

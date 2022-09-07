@@ -13,6 +13,11 @@
  */
 
 #include "FileUtil.h"
+#include "RegistryUtil.h"
+#include "StringUtil.h"
+#include "json/json.h"
+#include <string>
+#include "UtilConstants.h"
 
 using namespace std;
 

@@ -13,6 +13,7 @@
  */
 
 #include "RegistryUtil.h"
+#include <Windows.h>
 
 using namespace std;
 

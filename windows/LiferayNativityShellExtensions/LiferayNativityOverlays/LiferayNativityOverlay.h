@@ -12,22 +12,12 @@
  * details.
  */
 
-#ifndef LIFERAYNATIVITYOVERLAY_H
-#define LIFERAYNATIVITYOVERLAY_H
-
-#include "RegistryUtil.h"
-#include "StringUtil.h"
-#include "UtilConstants.h"
-#include "json/json.h"
-#include "stdafx.h"
-
-#include <iostream>
-#include <fstream>
-
 #pragma once
 
-class LiferayNativityOverlay : public IShellIconOverlayIdentifier
+#include <ShlObj.h>
+#include <CommunicationSocket.h>
 
+class LiferayNativityOverlay : public IShellIconOverlayIdentifier
 {
 	public:
 		LiferayNativityOverlay();
@@ -56,5 +46,3 @@ class LiferayNativityOverlay : public IShellIconOverlayIdentifier
 
 		CommunicationSocket* _communicationSocket;
 };
-
-#endif

@@ -12,6 +12,7 @@
  * details.
  */
 
+#include "stdafx.h"
 #include "NativityContextMenuRegistrationHandler.h"
 
 HRESULT NativityContextMenuRegistrationHandler::MakeRegistryEntries(const CLSID& clsid)

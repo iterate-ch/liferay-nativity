@@ -12,12 +12,11 @@
  * details.
  */
 
-#include <atlbase.h>
-#include <uxtheme.h>
-#include <windows.h>
+#include "stdafx.h"
 #include "LiferayNativityContextMenus.h"
+#include <shellapi.h>
+#include "ContextMenuUtil.h"
 
-#pragma comment(lib, "uxtheme.lib")
 
 LiferayNativityContextMenus::LiferayNativityContextMenus(): _contextMenuUtil(0), _referenceCount(1), _nFiles(0)
 {

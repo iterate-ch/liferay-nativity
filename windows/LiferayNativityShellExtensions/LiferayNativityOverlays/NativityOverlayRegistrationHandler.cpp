@@ -12,6 +12,7 @@
  * details.
  */
 
+#include "stdafx.h"
 #include "NativityOverlayRegistrationHandler.h"
 
 using namespace std;

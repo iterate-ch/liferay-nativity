@@ -12,6 +12,7 @@
  * details.
  */
 
+#include "stdafx.h"
 #include "ContextMenuItem.h"
 
 using namespace std;

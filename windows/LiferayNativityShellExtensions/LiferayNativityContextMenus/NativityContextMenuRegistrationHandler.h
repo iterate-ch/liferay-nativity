@@ -12,13 +12,9 @@
  * details.
  */
 
-#ifndef NATIVITYCONTEXTMENUREGISTRATIONHANDLER_H
-#define NATIVITYCONTEXTMENUREGISTRATIONHANDLER_H
-
 #pragma once
 
-#include "ContextMenuConstants.h"
-#include "stdafx.h"
+#include <Windows.h>
 
 class NativityContextMenuRegistrationHandler
 {
@@ -31,5 +27,3 @@ class NativityContextMenuRegistrationHandler
 
 		static HRESULT UnregisterCOMObject(const CLSID& clsid);
 };
-
-#endif

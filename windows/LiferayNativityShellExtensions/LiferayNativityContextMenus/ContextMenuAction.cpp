@@ -12,6 +12,7 @@
  * details.
  */
 
+#include "stdafx.h"
 #include "ContextMenuAction.h"
 
 using namespace std;

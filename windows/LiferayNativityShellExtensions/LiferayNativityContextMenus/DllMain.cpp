@@ -12,11 +12,11 @@
  * details.
  */
 
+#include "stdafx.h"
 #include "ContextMenuFactory.h"
 #include "NativityContextMenuRegistrationHandler.h"
 #include "ContextMenuConstants.h"
 #include <Guiddef.h>
-#include <windows.h>
 
 HINSTANCE instanceHandle = NULL;
 

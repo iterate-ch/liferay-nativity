@@ -12,13 +12,9 @@
  * details.
  */
 
-#ifndef OKOVERLAYFACTORY_H
-#define OKOVERLAYFACTORY_H
-
 #pragma once
 
-#include "LiferayNativityOverlay.h"
-#include "stdafx.h"
+#include <Unknwn.h>
 
 class NativityOverlayFactory : public IClassFactory
 {
@@ -43,5 +39,3 @@ class NativityOverlayFactory : public IClassFactory
 
 		long _referenceCount;
 };
-
-#endif

@@ -12,9 +12,9 @@
  * details.
  */
 
+#include "stdafx.h"
 #include "NativityOverlayRegistrationHandler.h"
 #include "NativityOverlayFactory.h"
-#include "stdafx.h"
 
 HINSTANCE instanceHandle = NULL;
 

@@ -13,6 +13,7 @@
  */
 
 #include "CommunicationSocket.h"
+#include "UtilConstants.h"
 
 #include <WinSock2.h>
 #include <Ws2def.h>

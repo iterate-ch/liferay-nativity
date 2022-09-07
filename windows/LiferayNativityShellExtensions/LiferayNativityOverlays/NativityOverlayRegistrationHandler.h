@@ -12,15 +12,9 @@
  * details.
  */
 
-#ifndef NATIVITYOVERLAYREGISTRATIONHANDLER_H
-#define NATIVITYCOVERLAYREGISTRATIONHANDLER_H
-
 #pragma once
 
-#include "stdafx.h"
-
-#include <iostream>
-#include <fstream>
+#include <Windows.h>
 
 class __declspec(dllexport) NativityOverlayRegistrationHandler
 {
@@ -33,5 +27,3 @@ class __declspec(dllexport) NativityOverlayRegistrationHandler
 
 		static HRESULT UnregisterCOMObject(const CLSID& clsid);
 };
-
-#endif

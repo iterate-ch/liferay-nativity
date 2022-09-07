@@ -12,18 +12,10 @@
  * details.
  */
 
-#ifndef COMMUNICATIONSOCKET_H
-#define COMMUNICATIONSOCKET_H
-
 #pragma once
 #pragma warning (disable : 4251)
 
-#include "UtilConstants.h"
-
-#include <fstream>
-#include <iostream>
 #include <string>
-#include <vector>
 
 class __declspec(dllexport) CommunicationSocket
 {
@@ -38,5 +30,3 @@ class __declspec(dllexport) CommunicationSocket
 	private:
 		int _port;
 };
-
-#endif

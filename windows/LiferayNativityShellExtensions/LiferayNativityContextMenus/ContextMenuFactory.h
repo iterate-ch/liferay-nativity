@@ -12,13 +12,7 @@
  * details.
  */
 
-#ifndef CONTEXTMENUFACTORY_H
-#define CONTEXTMENUFACTORY_H
-
 #pragma once
-
-#include "LiferayNativityContextMenus.h"
-#include "stdafx.h"
 
 class ContextMenuFactory : public IClassFactory
 {
@@ -42,5 +36,3 @@ class ContextMenuFactory : public IClassFactory
 		long _referenceCount;
 		wchar_t* _modulePath;
 };
-
-#endif
