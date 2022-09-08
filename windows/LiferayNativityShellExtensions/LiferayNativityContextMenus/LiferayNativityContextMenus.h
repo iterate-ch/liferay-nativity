@@ -22,12 +22,9 @@
 
 using namespace std;
 
-class LiferayNativityContextMenus : public IShellExtInit, public IContextMenu
+struct LiferayNativityContextMenus : winrt::implements<LiferayNativityContextMenus, IContextMenu, IShellExtInit>
 {
-	public:
 		LiferayNativityContextMenus(void);
-
-		IFACEMETHODIMP_(ULONG) AddRef();
 
 		IFACEMETHODIMP GetCommandString(UINT_PTR idCommand, UINT uFlags, UINT* pwReserved, LPSTR pszName, UINT cchMax);
 
@@ -36,13 +33,6 @@ class LiferayNativityContextMenus : public IShellExtInit, public IContextMenu
 		IFACEMETHODIMP InvokeCommand(LPCMINVOKECOMMANDINFO pici);
 
 		IFACEMETHODIMP QueryContextMenu(HMENU hMenu, UINT indexMenu, UINT idCmdFirst, UINT idCmdLast, UINT uFlags);
-
-		IFACEMETHODIMP QueryInterface(REFIID riid, void** ppv);
-
-		IFACEMETHODIMP_(ULONG) Release();
-
-	protected:
-		~LiferayNativityContextMenus(void);
 
 	private:
 		int _AddMenu(HMENU, ContextMenuItem*, int, int, UINT);
@@ -72,8 +62,6 @@ class LiferayNativityContextMenus : public IShellExtInit, public IContextMenu
 		void _PerformAction(int actionIndex, HWND hWnd);
 
 		ContextMenuUtil* _contextMenuUtil;
-
-		long _referenceCount;
 
 		UINT _nFiles;
 };

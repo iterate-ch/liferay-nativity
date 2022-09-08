@@ -17,18 +17,8 @@
 #include <shellapi.h>
 #include "ContextMenuUtil.h"
 
-
-LiferayNativityContextMenus::LiferayNativityContextMenus(): _contextMenuUtil(0), _referenceCount(1), _nFiles(0)
+LiferayNativityContextMenus::LiferayNativityContextMenus(): _contextMenuUtil(0), _nFiles(0)
 {
-}
-
-LiferayNativityContextMenus::~LiferayNativityContextMenus(void)
-{
-}
-
-IFACEMETHODIMP_(ULONG) LiferayNativityContextMenus::AddRef()
-{
-	return InterlockedIncrement(&_referenceCount);
 }
 
 IFACEMETHODIMP LiferayNativityContextMenus::GetCommandString(UINT_PTR idCommand, UINT uFlags, UINT* pwReserved, LPSTR pszName, UINT cchMax)
@@ -264,45 +254,6 @@ IFACEMETHODIMP LiferayNativityContextMenus::QueryContextMenu(HMENU hMenu, UINT i
 	cmdCount++;
 
 	return MAKE_HRESULT(SEVERITY_SUCCESS, 0, cmdCount - idCmdFirst + 1);
-}
-
-IFACEMETHODIMP LiferayNativityContextMenus::QueryInterface(REFIID riid, void** ppv)
-{
-	HRESULT hResult = S_OK;
-
-	if (IsEqualIID(IID_IUnknown, riid) ||
-		IsEqualIID(IID_IContextMenu, riid))
-	{
-		*ppv = static_cast<IContextMenu*>(this);
-	}
-	else if (IsEqualIID(IID_IShellExtInit, riid))
-	{
-		*ppv = static_cast<IShellExtInit*>(this);
-	}
-	else
-	{
-		hResult = E_NOINTERFACE;
-		*ppv = NULL;
-	}
-
-	if (*ppv)
-	{
-		AddRef();
-	}
-
-	return hResult;
-}
-
-IFACEMETHODIMP_(ULONG) LiferayNativityContextMenus::Release()
-{
-	long cRef = InterlockedDecrement(&_referenceCount);
-
-	if (0 == cRef)
-	{
-		delete this;
-	}
-
-	return cRef;
 }
 
 int LiferayNativityContextMenus::_AddMenu(HMENU hMenu, ContextMenuItem* menu, int location, int cmdCount, UINT offset)

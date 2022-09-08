@@ -22,10 +22,6 @@ ContextMenuFactory::ContextMenuFactory(wchar_t* modulePath) : _modulePath(module
 {
 }
 
-ContextMenuFactory::~ContextMenuFactory()
-{
-}
-
 IFACEMETHODIMP ContextMenuFactory::CreateInstance(
     IUnknown* pUnkOuter, REFIID riid, void** ppv)
 {
@@ -38,18 +34,14 @@ IFACEMETHODIMP ContextMenuFactory::CreateInstance(
 
 	hResult = E_OUTOFMEMORY;
 
-	LiferayNativityContextMenus* liferayNativityContextMenus = new(std::nothrow) LiferayNativityContextMenus();
+	auto liferayNativityContextMenus{ winrt::make<LiferayNativityContextMenus>() };
 
 	if (!liferayNativityContextMenus)
 	{
 		return hResult;
 	}
 
-	hResult = liferayNativityContextMenus->QueryInterface(riid, ppv);
-
-	liferayNativityContextMenus->Release();
-
-	return hResult;
+	return liferayNativityContextMenus.as(riid, ppv);
 }
 
 IFACEMETHODIMP ContextMenuFactory::LockServer(BOOL fLock)

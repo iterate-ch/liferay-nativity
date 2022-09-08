@@ -18,8 +18,6 @@ struct ContextMenuFactory : winrt::implements<ContextMenuFactory, IClassFactory>
 {
 		ContextMenuFactory(wchar_t*);
 
-		~ContextMenuFactory();
-
 		IFACEMETHODIMP CreateInstance(IUnknown* pUnkOuter, REFIID riid, void** ppv);
 
 		IFACEMETHODIMP LockServer(BOOL fLock);

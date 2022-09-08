@@ -68,7 +68,13 @@ STDAPI DllGetClassObject(REFCLSID rclsid, REFIID riid, void** ppv)
 		return hResult;
 	}
 
-	return winrt::make<ContextMenuFactory>(szModule).as(riid, ppv);
+	hResult = E_OUTOFMEMORY;
+	auto contextMenuFactory{ winrt::make<ContextMenuFactory>(szModule) };
+	if (!contextMenuFactory) {
+		return hResult;
+	}
+
+	return contextMenuFactory.as(riid, ppv);
 }
 
 STDAPI DllCanUnloadNow(void)
