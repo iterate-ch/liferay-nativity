@@ -17,6 +17,8 @@
 #include <memory>
 #include <StringUtil.h>
 #include <json/json.h>
+#include <FileUtil.h>
+#include <RegistryUtil.h>
 #include "UtilConstants.h"
 #include "OverlayConstants.h"
 
@@ -27,7 +29,7 @@ extern HINSTANCE instanceHandle;
 #define IDM_DISPLAY 0
 #define IDB_OK 101
 
-LiferayNativityOverlay::LiferayNativityOverlay() : _referenceCount(1)
+LiferayNativityOverlay::LiferayNativityOverlay()
 {
 	_communicationSocket = new CommunicationSocket();
 }
@@ -37,44 +39,6 @@ LiferayNativityOverlay::~LiferayNativityOverlay(void)
 	if (_communicationSocket != nullptr) {
 		delete _communicationSocket;
 	}
-}
-
-IFACEMETHODIMP_(ULONG) LiferayNativityOverlay::AddRef()
-{
-	return InterlockedIncrement(&_referenceCount);
-}
-
-IFACEMETHODIMP LiferayNativityOverlay::QueryInterface(REFIID riid, void** ppv)
-{
-	HRESULT hResult = S_OK;
-
-	if (IsEqualIID(IID_IUnknown, riid) ||  IsEqualIID(IID_IShellIconOverlayIdentifier, riid))
-	{
-		*ppv = static_cast<IShellIconOverlayIdentifier*>(this);
-	}
-	else
-	{
-		hResult = E_NOINTERFACE;
-		*ppv = NULL;
-	}
-
-	if (*ppv)
-	{
-		AddRef();
-	}
-
-	return hResult;
-}
-
-IFACEMETHODIMP_(ULONG) LiferayNativityOverlay::Release()
-{
-	ULONG cRef = InterlockedDecrement(&_referenceCount);
-	if (0 == cRef)
-	{
-		delete this;
-	}
-
-	return cRef;
 }
 
 IFACEMETHODIMP LiferayNativityOverlay::GetPriority(int* pPriority)

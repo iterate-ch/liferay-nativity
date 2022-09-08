@@ -17,12 +17,11 @@
 #include <ShlObj.h>
 #include <CommunicationSocket.h>
 
-class LiferayNativityOverlay : public IShellIconOverlayIdentifier
+struct LiferayNativityOverlay : winrt::implements<LiferayNativityOverlay, IShellIconOverlayIdentifier>
 {
-	public:
 		LiferayNativityOverlay();
 
-		IFACEMETHODIMP_(ULONG) AddRef();
+		~LiferayNativityOverlay(void);
 
 		IFACEMETHODIMP GetOverlayInfo(PWSTR pwszIconFile, int cchMax, int* pIndex, DWORD* pdwFlags);
 
@@ -30,19 +29,10 @@ class LiferayNativityOverlay : public IShellIconOverlayIdentifier
 
 		IFACEMETHODIMP IsMemberOf(PCWSTR pwszPath, DWORD dwAttrib);
 
-		IFACEMETHODIMP QueryInterface(REFIID riid, void** ppv);
-
-		IFACEMETHODIMP_(ULONG) Release();
-
-	protected:
-		~LiferayNativityOverlay(void);
-
 	private:
 		bool _IsOverlaysEnabled();
 
 		bool _IsMonitoredFileState(const wchar_t* filePath);
-
-		long _referenceCount;
 
 		CommunicationSocket* _communicationSocket;
 };

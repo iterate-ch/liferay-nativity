@@ -12,19 +12,11 @@
  *  details.
  */
 
+#pragma once
 #define WIN32_LEAN_AND_MEAN
 
-#include "CommunicationSocket.h"
-#include "RegistryUtil.h"
-#include "OverlayConstants.h"
-#include "FileUtil.h"
+#include <Unknwn.h>
+#include <Windows.h>
+#include <winrt/base.h>
 
-#include <string>
-#include <new>
-#include <Guiddef.h>
-#include <windows.h>
-#include <Shlwapi.h>
-#include <shlobj.h>
-#include <unknwn.h>
-#include <vector>
-#include <strsafe.h>
+#include "OverlayConstants.h"

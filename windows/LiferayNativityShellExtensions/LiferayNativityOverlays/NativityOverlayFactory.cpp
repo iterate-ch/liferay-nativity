@@ -75,19 +75,14 @@ IFACEMETHODIMP NativityOverlayFactory::CreateInstance(
 
 	hResult = E_OUTOFMEMORY;
 
-	LiferayNativityOverlay* lrOverlay =
-	    new(std::nothrow) LiferayNativityOverlay();
+	auto lrOverlay{ winrt::make<LiferayNativityOverlay>() };
 
 	if (!lrOverlay)
 	{
 		return hResult;
 	}
 
-	hResult = lrOverlay->QueryInterface(riid, ppv);
-
-	lrOverlay->Release();
-
-	return hResult;
+	return lrOverlay.as(riid, ppv);
 }
 
 IFACEMETHODIMP NativityOverlayFactory::LockServer(BOOL fLock)
