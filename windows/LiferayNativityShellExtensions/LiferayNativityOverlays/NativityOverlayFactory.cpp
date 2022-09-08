@@ -18,7 +18,7 @@
 
 extern long dllReferenceCount;
 
-NativityOverlayFactory::NativityOverlayFactory(wchar_t* path) : _referenceCount(1)
+NativityOverlayFactory::NativityOverlayFactory(wchar_t* path) : _path(path)
 {
 	InterlockedIncrement(&dllReferenceCount);
 }
@@ -26,41 +26,6 @@ NativityOverlayFactory::NativityOverlayFactory(wchar_t* path) : _referenceCount(
 NativityOverlayFactory::~NativityOverlayFactory()
 {
 	InterlockedDecrement(&dllReferenceCount);
-}
-
-IFACEMETHODIMP NativityOverlayFactory::QueryInterface(REFIID riid, void** ppv)
-{
-	HRESULT hResult = S_OK;
-
-	if (IsEqualIID(IID_IUnknown, riid) ||
-	        IsEqualIID(IID_IClassFactory, riid))
-	{
-		*ppv = static_cast<IUnknown*>(this);
-		AddRef();
-	}
-	else
-	{
-		hResult = E_NOINTERFACE;
-		*ppv = NULL;
-	}
-
-	return hResult;
-}
-
-IFACEMETHODIMP_(ULONG) NativityOverlayFactory::AddRef()
-{
-	return InterlockedIncrement(&_referenceCount);
-}
-
-IFACEMETHODIMP_(ULONG) NativityOverlayFactory::Release()
-{
-	ULONG cRef = InterlockedDecrement(&_referenceCount);
-
-	if (0 == cRef)
-	{
-		delete this;
-	}
-	return cRef;
 }
 
 IFACEMETHODIMP NativityOverlayFactory::CreateInstance(

@@ -16,26 +16,16 @@
 
 #include <Unknwn.h>
 
-class NativityOverlayFactory : public IClassFactory
+struct NativityOverlayFactory : winrt::implements<NativityOverlayFactory, IClassFactory>
 {
-	public:
 		NativityOverlayFactory(wchar_t* path);
 
-		IFACEMETHODIMP_(ULONG) AddRef();
+		~NativityOverlayFactory();
 
 		IFACEMETHODIMP CreateInstance(IUnknown* pUnkOuter, REFIID riid, void** ppv);
 
 		IFACEMETHODIMP LockServer(BOOL fLock);
 
-		IFACEMETHODIMP QueryInterface(REFIID riid, void** ppv);
-
-		IFACEMETHODIMP_(ULONG) Release();
-
-	protected:
-		~NativityOverlayFactory();
-
 	private:
 		wchar_t* _path;
-
-		long _referenceCount;
 };

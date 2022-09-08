@@ -66,12 +66,11 @@ STDAPI DllGetClassObject(REFCLSID rclsid, REFIID riid, void** ppv)
 		return hResult;
 	}
 
-	NativityOverlayFactory* nativityOverlayFactory = new NativityOverlayFactory(szModule);
+	auto nativityOverlayFactory{ winrt::make<NativityOverlayFactory>(szModule) };
 
 	if (nativityOverlayFactory)
 	{
-		hResult = nativityOverlayFactory->QueryInterface(riid, ppv);
-		nativityOverlayFactory->Release();
+		hResult = nativityOverlayFactory.as(riid, ppv);
 	}
 	return hResult;
 }
