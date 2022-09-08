@@ -14,25 +14,16 @@
 
 #pragma once
 
-class ContextMenuFactory : public IClassFactory
+struct ContextMenuFactory : winrt::implements<ContextMenuFactory, IClassFactory>
 {
-	public:
 		ContextMenuFactory(wchar_t*);
 
-		IFACEMETHODIMP_(ULONG) AddRef();
+		~ContextMenuFactory();
 
 		IFACEMETHODIMP CreateInstance(IUnknown* pUnkOuter, REFIID riid, void** ppv);
 
 		IFACEMETHODIMP LockServer(BOOL fLock);
 
-		IFACEMETHODIMP QueryInterface(REFIID riid, void** ppv);
-
-		IFACEMETHODIMP_(ULONG) Release();
-
-	protected:
-		~ContextMenuFactory();
-
 	private:
-		long _referenceCount;
 		wchar_t* _modulePath;
 };

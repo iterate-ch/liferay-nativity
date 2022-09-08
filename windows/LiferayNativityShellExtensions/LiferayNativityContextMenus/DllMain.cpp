@@ -68,16 +68,7 @@ STDAPI DllGetClassObject(REFCLSID rclsid, REFIID riid, void** ppv)
 		return hResult;
 	}
 
-	ContextMenuFactory* contextMenuFactory = new ContextMenuFactory(szModule);
-
-	if (contextMenuFactory)
-	{
-		hResult = contextMenuFactory->QueryInterface(riid, ppv);
-
-		contextMenuFactory->Release();
-	}
-
-	return hResult;
+	return winrt::make<ContextMenuFactory>(szModule).as(riid, ppv);
 }
 
 STDAPI DllCanUnloadNow(void)

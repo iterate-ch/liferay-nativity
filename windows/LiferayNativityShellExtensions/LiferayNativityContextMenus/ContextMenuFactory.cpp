@@ -18,54 +18,12 @@
 
 extern long dllReferenceCount;
 
-ContextMenuFactory::ContextMenuFactory(wchar_t* modulePath) : _modulePath(modulePath), _referenceCount(1)
+ContextMenuFactory::ContextMenuFactory(wchar_t* modulePath) : _modulePath(modulePath)
 {
-	InterlockedIncrement(&dllReferenceCount);
 }
 
 ContextMenuFactory::~ContextMenuFactory()
 {
-	InterlockedDecrement(&dllReferenceCount);
-}
-
-IFACEMETHODIMP ContextMenuFactory::QueryInterface(REFIID riid, void** ppv)
-{
-	HRESULT hResult = S_OK;
-
-	if (IsEqualIID(IID_IUnknown, riid) ||
-	        IsEqualIID(IID_IClassFactory, riid))
-	{
-		*ppv = static_cast<IUnknown*>(this);
-
-		AddRef();
-	}
-	else
-	{
-		hResult = E_NOINTERFACE;
-
-		*ppv = NULL;
-	}
-
-	return hResult;
-}
-
-IFACEMETHODIMP_(ULONG) ContextMenuFactory::AddRef()
-{
-	long result = InterlockedIncrement(&_referenceCount);
-
-	return result;
-}
-
-IFACEMETHODIMP_(ULONG) ContextMenuFactory::Release()
-{
-	long cRef = InterlockedDecrement(&_referenceCount);
-
-	if (0 == cRef)
-	{
-		delete this;
-	}
-
-	return cRef;
 }
 
 IFACEMETHODIMP ContextMenuFactory::CreateInstance(
