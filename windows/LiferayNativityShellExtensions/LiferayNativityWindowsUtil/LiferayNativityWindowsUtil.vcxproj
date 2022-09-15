@@ -24,14 +24,12 @@
     <MinimalCoreWin>true</MinimalCoreWin>
     <ProjectGuid>{04E95851-453A-4215-A830-CBCB3A675647}</ProjectGuid>
     <RootNamespace>LiferayNativityWindowsUtil</RootNamespace>
-    <ApplicationType>Windows Store</ApplicationType>
     <WindowsTargetPlatformVersion Condition=" '$(WindowsTargetPlatformVersion)' == '' ">10.0</WindowsTargetPlatformVersion>
     <WindowsTargetPlatformMinVersion>10.0.17763.0</WindowsTargetPlatformMinVersion>
     <DesktopCompatible>True</DesktopCompatible>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <Import Project="..\build\native\Microsoft.Windows.CppWinRT.props" Sdk="Microsoft.Windows.CppWinRT" Version="$(CppWinRTVersion)" />
-
   <PropertyGroup Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <PlatformToolset>v143</PlatformToolset>
@@ -50,6 +48,7 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
+  <ImportGroup Label="Shared" />
   <ImportGroup Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
@@ -72,10 +71,14 @@
       <!--Temporarily disable cppwinrt heap enforcement to work around xaml compiler generated std::shared_ptr use -->
       <AdditionalOptions Condition="'$(CppWinRTHeapEnforcement)'==''">/DWINRT_NO_MAKE_DETECTION %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
-      <PreprocessorDefinitions>_WINRT_DLL;_WINDLL;JSON_IS_AMALGAMATION;JSON_DLL_BUILD;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(JAVA_HOME)\include\win32;$(JAVA_HOME)\include;$(WindowsTargetDir)generated\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_WINRT_DLL;WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(JAVA_HOME)\include\win32;$(JAVA_HOME)\include;$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalUsingDirectories>$(WindowsSDK_WindowsMetadata);%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
+      <MultiProcessorCompilation>false</MultiProcessorCompilation>
     </ClCompile>
+    <ResourceCompile>
+      <AdditionalIncludeDirectories>$(OutDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -103,9 +106,13 @@
     <ClInclude Include="com_liferay_nativity_control_win_WindowsNativityUtil.h" />
     <ClInclude Include="ConfigConstants.h" />
     <ClInclude Include="ConfigurationUtil.h" />
+    <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ConfigurationUtil.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="LiferayNativityWindowsUtil.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

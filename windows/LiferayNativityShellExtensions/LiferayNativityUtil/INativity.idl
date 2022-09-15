@@ -1,0 +1,14 @@
+import "oaidl.idl";
+import "ocidl.idl";
+
+[object, oleautomation, dual, uuid("F296B3C1-661C-4D54-9DE8-D5818366E13E")]
+interface INativity : IDispatch {
+	HRESULT ReceiveMessage([in, string] LPWSTR Message, [out] BSTR* Response);
+
+	HRESULT IsFiltered([in, string] LPWSTR Message, [out] VARIANT_BOOL* Filtered);
+};
+
+[uuid("25C0E8A3-A20D-458D-B623-5918A5BEBA66"), version(0)]
+library Nativity {
+	interface INativity;
+}

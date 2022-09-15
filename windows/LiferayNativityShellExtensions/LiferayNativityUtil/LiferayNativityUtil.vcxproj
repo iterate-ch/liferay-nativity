@@ -24,10 +24,11 @@
     <MinimalCoreWin>true</MinimalCoreWin>
     <ProjectGuid>{E4F63E19-808D-4234-8DF0-69C5F47C9CD3}</ProjectGuid>
     <RootNamespace>LiferayNativityUtil</RootNamespace>
-    <ApplicationType>Windows Store</ApplicationType>
     <WindowsTargetPlatformVersion Condition=" '$(WindowsTargetPlatformVersion)' == '' ">10.0</WindowsTargetPlatformVersion>
     <WindowsTargetPlatformMinVersion>10.0.17763.0</WindowsTargetPlatformMinVersion>
     <DesktopCompatible>True</DesktopCompatible>
+    <CppWinRTModernIDL>false</CppWinRTModernIDL>
+    <CppWinRTGenerateWindowsMetadata>false</CppWinRTGenerateWindowsMetadata>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <Import Project="..\build\native\Microsoft.Windows.CppWinRT.props" Sdk="Microsoft.Windows.CppWinRT" Version="$(CppWinRTVersion)" />
@@ -49,6 +50,7 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
+  <ImportGroup Label="Shared" />
   <ImportGroup Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
@@ -72,8 +74,9 @@
       <AdditionalOptions Condition="'$(CppWinRTHeapEnforcement)'==''">/DWINRT_NO_MAKE_DETECTION %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
       <PreprocessorDefinitions>_WINRT_DLL;JSON_DLL_BUILD;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(WindowsTargetDir)generated\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(OutDir);$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalUsingDirectories>$(WindowsSDK_WindowsMetadata);%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
+      <MultiProcessorCompilation>false</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -81,6 +84,13 @@
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>..\$(Configuration)\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
+    <Midl>
+      <DllDataFileName>$(IntDir)dlldata.c</DllDataFileName>
+      <HeaderFileName>$(IntDir)%(Filename).h</HeaderFileName>
+      <InterfaceIdentifierFileName>$(IntDir)%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>$(IntDir)%(Filename)_p.c</ProxyFileName>
+      <TypeLibraryName>$(OutDir)%(Filename).tlb</TypeLibraryName>
+    </Midl>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Debug'">
     <ClCompile>
@@ -99,20 +109,20 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="json\json.h" />
+    <ClInclude Include="NativityUtil.h" />
     <ClInclude Include="StringUtil.h" />
     <ClInclude Include="NativityMessage.h" />
     <ClInclude Include="UtilConstants.h" />
-    <ClInclude Include="CommunicationSocket.h" />
-    <ClInclude Include="FileUtil.h" />
-    <ClInclude Include="RegistryUtil.h" />
+    <ClInclude Include="$(IntDir)INativity.tlh" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CommunicationSocket.cpp" />
-    <ClCompile Include="FileUtil.cpp" />
     <ClCompile Include="jsoncpp.cpp" />
     <ClCompile Include="NativityMessage.cpp" />
+    <ClCompile Include="NativityUtil.cpp" />
     <ClCompile Include="StringUtil.cpp" />
-    <ClCompile Include="RegistryUtil.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Midl Include="INativity.idl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

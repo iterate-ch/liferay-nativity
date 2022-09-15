@@ -14,8 +14,7 @@
 
 #include "stdafx.h"
 #include "ContextMenuUtil.h"
-
-#include <FileUtil.h>
+#include <NativityUtil.h>
 #include <memory>
 #include <StringUtil.h>
 #include <UtilConstants.h>
@@ -24,17 +23,11 @@ using namespace std;
 
 ContextMenuUtil::ContextMenuUtil() : _menuList(0)
 {
-	_communicationSocket = new CommunicationSocket();
 	_selectedFiles = new vector<wstring>;
 }
 
 ContextMenuUtil::~ContextMenuUtil(void)
 {
-	if (_communicationSocket != 0)
-	{
-		delete _communicationSocket;
-	}
-
 	if (_menuList != 0)
 	{
 		delete _menuList;
@@ -96,8 +89,7 @@ bool ContextMenuUtil::IsMenuNeeded(void)
 	{
 		wstring selectedFile = *it;
 
-		if (FileUtil::IsFileFiltered(selectedFile.c_str()))
-		{
+		if (NativityUtil::IsFileFiltered(selectedFile.c_str())) {
 			return true;
 		}
 	}
@@ -120,22 +112,15 @@ bool ContextMenuUtil::InitMenus(void)
 
 	Json::FastWriter jsonWriter;
 
-	wstring* getMenuMessage = new wstring();
-
-	getMenuMessage->append(StringUtil::toWstring(jsonWriter.write(jsonRoot)));
-
-	wstring* getMenuReceived = new wstring();
-
-	if (_communicationSocket->SendMessageReceiveResponse(getMenuMessage->c_str(), getMenuReceived))
-	{
+	wstring getMenuMessage = StringUtil::toWstring(jsonWriter.write(jsonRoot));
+	
+	LPCWSTR getMenuReceived;
+	if (NativityUtil::ReceiveResponse(getMenuMessage.c_str(), getMenuReceived)) {
 		Json::Reader jsonReader;
 		Json::Value jsonResponse;
 
-		if (!jsonReader.parse(StringUtil::toString(*getMenuReceived), jsonResponse))
+		if (!jsonReader.parse(StringUtil::toString(getMenuReceived), jsonResponse))
 		{
-			delete getMenuReceived;
-			delete getMenuMessage;
-
 			return false;
 		}
 
@@ -150,9 +135,6 @@ bool ContextMenuUtil::InitMenus(void)
 
 			if (!_ParseContextMenuItem(jsonContextMenuItem, contextMenuItem))
 			{
-				delete getMenuReceived;
-				delete getMenuMessage;
-
 				return false;
 			}
 
@@ -160,16 +142,13 @@ bool ContextMenuUtil::InitMenus(void)
 		}
 	}
 
-	delete getMenuReceived;
-	delete getMenuMessage;
-
-	return true;;
+	return true;
 }
 
 bool ContextMenuUtil::_ParseContextMenuItem(const Json::Value& jsonContextMenuItem, ContextMenuItem* contextMenuItem)
 {
 	// enabled
-	
+
 	bool enabled = jsonContextMenuItem.get(NATIVITY_ENABLED, true).asBool();
 
 	contextMenuItem->SetEnabled(enabled);
@@ -207,7 +186,7 @@ bool ContextMenuUtil::_ParseContextMenuItem(const Json::Value& jsonContextMenuIt
 	helpText->append(StringUtil::toWstring(jsonContextMenuItem.get(NATIVITY_HELP_TEXT, "").asString()));
 
 	contextMenuItem->SetHelpText(helpText);
-	
+
 	// icon path
 
 	wstring* iconPath = new wstring();
@@ -215,7 +194,7 @@ bool ContextMenuUtil::_ParseContextMenuItem(const Json::Value& jsonContextMenuIt
 	iconPath->append(StringUtil::toWstring(jsonContextMenuItem.get(NATIVITY_ICON_PATH, "").asString()));
 
 	contextMenuItem->SetIconPath(iconPath);
-	
+
 	// children context menu items
 
 	Json::Value jsonChildrenContextMenuItems = jsonContextMenuItem.get(NATIVITY_CONTEXT_MENU_ITEMS, "");
@@ -309,13 +288,10 @@ bool ContextMenuUtil::PerformAction(int command, HWND hWnd)
 
 	Json::FastWriter jsonWriter;
 
-	wstring* jsonMessage = new wstring();
+	wstring jsonMessage = StringUtil::toWstring(jsonWriter.write(jsonRoot));
 
-	jsonMessage->append(StringUtil::toWstring(jsonWriter.write(jsonRoot)));
-
-	wstring* response = new wstring();
-
-	if (!_communicationSocket->SendMessageReceiveResponse(jsonMessage->c_str(), response))
+	wstring response;
+	if (!_communicationSocket->Handle(jsonMessage.c_str(), response))
 	{
 		return false;
 	}

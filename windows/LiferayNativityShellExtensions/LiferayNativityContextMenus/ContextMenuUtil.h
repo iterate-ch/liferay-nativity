@@ -52,8 +52,6 @@ class __declspec(dllexport) ContextMenuUtil
 
 		bool _ProcessContextMenus(NativityMessage*);
 
-		CommunicationSocket* _communicationSocket;
-
 		std::vector<ContextMenuItem*>* _menuList;
 
 		std::vector<std::wstring>* _selectedFiles;
