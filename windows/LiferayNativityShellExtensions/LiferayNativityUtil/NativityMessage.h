@@ -19,18 +19,17 @@
 class __declspec(dllexport) NativityMessage
 {
 	public:
-		NativityMessage(void);
-		~NativityMessage(void);
+		NativityMessage(void) = default;
 
-		std::wstring* GetCommand();
+		std::wstring GetCommand();
 
-		std::wstring* GetValue();
+		std::wstring GetValue();
 
-		void SetCommand(std::wstring*);
+		void SetCommand(const std::wstring&);
 
-		void SetValue(std::wstring*);
+		void SetValue(const std::wstring&);
 
 	private:
-		std::wstring* _command;
-		std::wstring* _value;
+		std::wstring _command;
+		std::wstring _value;
 };

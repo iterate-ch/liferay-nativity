@@ -15,13 +15,11 @@
 #pragma once
 
 #include <ShlObj.h>
-#include <CommunicationSocket.h>
 
 struct LiferayNativityOverlay : winrt::implements<LiferayNativityOverlay, IShellIconOverlayIdentifier>
 {
 		LiferayNativityOverlay();
-
-		~LiferayNativityOverlay(void);
+		~LiferayNativityOverlay();
 
 		IFACEMETHODIMP GetOverlayInfo(PWSTR pwszIconFile, int cchMax, int* pIndex, DWORD* pdwFlags);
 
@@ -33,6 +31,4 @@ struct LiferayNativityOverlay : winrt::implements<LiferayNativityOverlay, IShell
 		bool _IsOverlaysEnabled();
 
 		bool _IsMonitoredFileState(const wchar_t* filePath);
-
-		CommunicationSocket* _communicationSocket;
 };

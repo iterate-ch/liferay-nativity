@@ -21,101 +21,73 @@
 
 using namespace std;
 
-ContextMenuUtil::ContextMenuUtil() : _menuList(0)
+bool ContextMenuUtil::AddFile(const wstring& const file)
 {
-	_selectedFiles = new vector<wstring>;
-}
-
-ContextMenuUtil::~ContextMenuUtil(void)
-{
-	if (_menuList != 0)
-	{
-		delete _menuList;
-	}
-
-	_selectedFiles = 0;
-}
-
-bool ContextMenuUtil::AddFile(wstring file)
-{
-	_selectedFiles->push_back(file);
+	_selectedFiles.push_back(file);
 
 	return true;
 }
 
-bool ContextMenuUtil::GetContextMenuItem(int index, ContextMenuItem** item)
+bool ContextMenuUtil::GetContextMenuItem(int index, ContextMenuItem*& item)
 {
-	return _GetContextMenuItem(index, _menuList, item);
+	vector<ContextMenuItem*> menuList;
+	GetMenus(menuList);
+	return _GetContextMenuItem(index, menuList, item);
 }
 
-bool ContextMenuUtil::_GetContextMenuItem(int index, vector<ContextMenuItem*>* menus, ContextMenuItem** item)
+bool ContextMenuUtil::_GetContextMenuItem(int index, const vector<ContextMenuItem*>& const menus, ContextMenuItem*& item)
 {
-	for (vector<ContextMenuItem*>::iterator it = menus->begin(); it != menus->end(); it++)
-	{
-		ContextMenuItem* temp = *it;
-		if (temp->GetIndex() == index)
-		{
-			*item = temp;
+	for (auto it : menus) {
+		if (it->GetIndex() == index) {
+			item = it;
 			return true;
 		}
 
-		if (temp->GetContextMenuItems() != 0 && temp->GetContextMenuItems()->size() > 0)
-		{
-			if (_GetContextMenuItem(index, temp->GetContextMenuItems(), item))
-			{
+		auto other{ it->GetContextMenuItems() };
+		if (other.size() > 0) {
+			if (_GetContextMenuItem(index, other, item)) {
 				return true;
 			}
 		}
 	}
-
 	return false;
 }
 
-bool ContextMenuUtil::GetMenus(vector<ContextMenuItem*>* menuList)
+bool ContextMenuUtil::GetMenus(vector<ContextMenuItem*>& menuList)
 {
-	if (_menuList == 0)
-	{
-		return false;
+	menuList = vector<ContextMenuItem*>(_menuList.size());
+	for (auto& it : _menuList) {
+		menuList.push_back(it.get());
 	}
-
-	menuList->insert(menuList->end(), _menuList->begin(), _menuList->end());
-
 	return true;
 }
 
 bool ContextMenuUtil::IsMenuNeeded(void)
 {
-	for (vector<wstring>::iterator it = _selectedFiles->begin(); it != _selectedFiles->end(); it++)
-	{
-		wstring selectedFile = *it;
-
-		if (NativityUtil::IsFileFiltered(selectedFile.c_str())) {
+	for (auto selectedFile : _selectedFiles) {
+		if (NativityUtil::IsFileFiltered(selectedFile)) {
 			return true;
 		}
 	}
-
 	return false;
 }
 
 bool ContextMenuUtil::InitMenus(void)
 {
-	_menuList = new vector<ContextMenuItem*>();
-
 	Json::Value jsonRoot;
 
 	jsonRoot[NATIVITY_COMMAND] = NATIVITY_GET_CONTEXT_MENU_LIST;
 
-	for (vector<wstring>::iterator it = _selectedFiles->begin(); it != _selectedFiles->end(); it++)
-	{
-		jsonRoot[NATIVITY_VALUE].append(StringUtil::toString(*it));
+	for (auto it : _selectedFiles) {
+		jsonRoot[NATIVITY_VALUE].append(StringUtil::toString(it));
 	}
 
 	Json::FastWriter jsonWriter;
 
 	wstring getMenuMessage = StringUtil::toWstring(jsonWriter.write(jsonRoot));
-	
-	LPCWSTR getMenuReceived;
-	if (NativityUtil::ReceiveResponse(getMenuMessage.c_str(), getMenuReceived)) {
+
+	wstring getMenuReceived;
+	if (NativityUtil::ReceiveResponse(getMenuMessage, getMenuReceived)) {
 		Json::Reader jsonReader;
 		Json::Value jsonResponse;
 
@@ -130,107 +102,88 @@ bool ContextMenuUtil::InitMenus(void)
 		{
 			Json::Value jsonContextMenuItem = jsonContextMenuItemsList[i];
 
-			ContextMenuItem* contextMenuItem = new ContextMenuItem();
+			auto contextMenuItem{ make_unique<ContextMenuItem>() };
 			contextMenuItem->SetId(i);
 
-			if (!_ParseContextMenuItem(jsonContextMenuItem, contextMenuItem))
+			if (!_ParseContextMenuItem(jsonContextMenuItem, *contextMenuItem))
 			{
 				return false;
 			}
-
-			_menuList->push_back(contextMenuItem);
+			_menuList.emplace_back(move(contextMenuItem));
 		}
 	}
 
 	return true;
 }
 
-bool ContextMenuUtil::_ParseContextMenuItem(const Json::Value& jsonContextMenuItem, ContextMenuItem* contextMenuItem)
+bool ContextMenuUtil::_ParseContextMenuItem(const Json::Value& jsonContextMenuItem, ContextMenuItem& const contextMenuItem)
 {
 	// enabled
 
 	bool enabled = jsonContextMenuItem.get(NATIVITY_ENABLED, true).asBool();
 
-	contextMenuItem->SetEnabled(enabled);
+	contextMenuItem.SetEnabled(enabled);
 
 	// title
 
-	wstring* title = new wstring();
+	auto title = StringUtil::toWstring(jsonContextMenuItem.get(NATIVITY_TITLE, "").asCString());
 
-	title->append(StringUtil::toWstring(jsonContextMenuItem.get(NATIVITY_TITLE, "").asString()));
-
-	if (title->size() == 0)
+	if (title.size() == 0)
 	{
 		return false;
 	}
 
-	contextMenuItem->SetTitle(title);
+	contextMenuItem.SetTitle(title);
 
 	// uuid
 
-	wstring* uuid = new wstring();
+	auto uuid = StringUtil::toWstring(jsonContextMenuItem.get(NATIVITY_UUID, "").asCString());
 
-	uuid->append(StringUtil::toWstring(jsonContextMenuItem.get(NATIVITY_UUID, "").asString()));
-
-	if (uuid->size() == 0)
+	if (uuid.size() == 0)
 	{
 		return false;
 	}
 
-	contextMenuItem->SetUuid(uuid);
+	contextMenuItem.SetUuid(uuid);
 
 	// help text
 
-	wstring* helpText = new wstring();
+	auto helpText = StringUtil::toWstring(jsonContextMenuItem.get(NATIVITY_HELP_TEXT, "").asCString());
 
-	helpText->append(StringUtil::toWstring(jsonContextMenuItem.get(NATIVITY_HELP_TEXT, "").asString()));
-
-	contextMenuItem->SetHelpText(helpText);
+	contextMenuItem.SetHelpText(helpText);
 
 	// icon path
 
-	wstring* iconPath = new wstring();
+	auto iconPath = StringUtil::toWstring(jsonContextMenuItem.get(NATIVITY_ICON_PATH, "").asCString());
 
-	iconPath->append(StringUtil::toWstring(jsonContextMenuItem.get(NATIVITY_ICON_PATH, "").asString()));
-
-	contextMenuItem->SetIconPath(iconPath);
+	contextMenuItem.SetIconPath(iconPath);
 
 	// children context menu items
 
 	Json::Value jsonChildrenContextMenuItems = jsonContextMenuItem.get(NATIVITY_CONTEXT_MENU_ITEMS, "");
 
-	vector<ContextMenuItem*>* childrenContextMenuItems = new vector<ContextMenuItem*>();
+	vector<unique_ptr<ContextMenuItem>> childrenContextMenuItems;
 
-	for (unsigned int i = 0; i < jsonChildrenContextMenuItems.size(); i++)
-	{
-		Json::Value jsonChildContextMenuItem = jsonChildrenContextMenuItems[i];
+	for (auto jsonChildContextMenuItem : jsonChildrenContextMenuItems) {
+		auto childContextMenuItem{ make_unique<ContextMenuItem>() };
 
-		ContextMenuItem* childContextMenuItem = new ContextMenuItem();
+		_ParseContextMenuItem(jsonChildContextMenuItem, *childContextMenuItem);
 
-		_ParseContextMenuItem(jsonChildContextMenuItem, childContextMenuItem);
-
-		childrenContextMenuItems->push_back(childContextMenuItem);
+		childrenContextMenuItems.emplace_back(move(childContextMenuItem));
 	}
 
-	contextMenuItem->SetContextMenuItems(childrenContextMenuItems);
+	contextMenuItem.SetContextMenuItems(move(childrenContextMenuItems));
 
 	return true;
 }
 
-bool ContextMenuUtil::GetContextMenuAction(std::wstring* title, ContextMenuAction** item)
+bool ContextMenuUtil::GetContextMenuAction(const std::wstring& const title, unique_ptr<ContextMenuAction>& item)
 {
-	for (vector<ContextMenuItem*>::iterator it = _menuList->begin(); it != _menuList->end(); it++)
-	{
-		ContextMenuItem* temp = *it;
-		wstring* currentTitle = temp->GetTitle();
-
-		if (currentTitle->compare(*title) == 0)
-		{
-			ContextMenuAction* action = new ContextMenuAction();
-			action->SetUuid(temp->GetUuid());
-			action->SetFiles(_selectedFiles);
-
-			item = &action;
+	for (auto& it : _menuList) {
+		if (title.compare(it->GetTitle()) == 0) {
+			item = make_unique<ContextMenuAction>();
+			item->SetUuid(it->GetUuid());
+			item->SetFiles(_selectedFiles);
 			return true;
 		}
 	}
@@ -238,17 +191,15 @@ bool ContextMenuUtil::GetContextMenuAction(std::wstring* title, ContextMenuActio
 	return false;
 }
 
-bool ContextMenuUtil::GetContextMenuAction(int action, ContextMenuAction** item)
+bool ContextMenuUtil::GetContextMenuAction(int action, unique_ptr<ContextMenuAction>& const item)
 {
 	ContextMenuItem* contextMenuItem;
 
-	if (GetContextMenuItem(action, &contextMenuItem))
+	if (GetContextMenuItem(action, contextMenuItem))
 	{
-		ContextMenuAction* action = new ContextMenuAction();
-		action->SetUuid(contextMenuItem->GetUuid());
-		action->SetFiles(_selectedFiles);
-
-		item = &action;
+		item = make_unique<ContextMenuAction>();
+		item->SetUuid(contextMenuItem->GetUuid());
+		item->SetFiles(_selectedFiles);
 
 		return true;
 	}
@@ -260,25 +211,22 @@ bool ContextMenuUtil::PerformAction(int command, HWND hWnd)
 {
 	ContextMenuItem* contextMenuItem;
 
-	if (!GetContextMenuItem(command, &contextMenuItem))
+	if (!GetContextMenuItem(command, contextMenuItem))
 	{
 		return false;
 	}
 
 	Json::Value jsonValue;
 
-	jsonValue[NATIVITY_UUID] = StringUtil::toString(contextMenuItem->GetUuid()->c_str());
+	jsonValue[NATIVITY_UUID] = StringUtil::toString(contextMenuItem->GetUuid());
 #ifdef _WIN64
 	jsonValue[NATIVITY_HWND] = (int64_t)hWnd;
 #else
 	jsonValue[NATIVITY_HWND] = (int32_t)hWnd;
 #endif
 
-	for (vector<wstring>::iterator it = _selectedFiles->begin(); it != _selectedFiles->end(); it++)
-	{
-		wstring selectedFile = *it;
-
-		jsonValue[NATIVITY_FILES].append(StringUtil::toString(selectedFile));
+	for (auto it : _selectedFiles) {
+		jsonValue[NATIVITY_FILES].append(StringUtil::toString(it));
 	}
 
 	Json::Value jsonRoot;
@@ -289,12 +237,6 @@ bool ContextMenuUtil::PerformAction(int command, HWND hWnd)
 	Json::FastWriter jsonWriter;
 
 	wstring jsonMessage = StringUtil::toWstring(jsonWriter.write(jsonRoot));
-
 	wstring response;
-	if (!_communicationSocket->Handle(jsonMessage.c_str(), response))
-	{
-		return false;
-	}
-
-	return true;
+	return NativityUtil::ReceiveResponse(jsonMessage, response);
 }

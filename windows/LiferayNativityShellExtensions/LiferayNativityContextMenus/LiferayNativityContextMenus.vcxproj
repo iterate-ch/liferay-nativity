@@ -117,7 +117,6 @@
     <ClCompile Include="ContextMenuUtil.cpp" />
     <ClCompile Include="DllMain.cpp" />
     <ClCompile Include="LiferayNativityContextMenus.cpp" />
-    <ClCompile Include="NativityContextMenuRegistrationHandler.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ContextMenuAction.h" />
@@ -126,7 +125,6 @@
     <ClInclude Include="ContextMenuItem.h" />
     <ClInclude Include="ContextMenuUtil.h" />
     <ClInclude Include="LiferayNativityContextMenus.h" />
-    <ClInclude Include="NativityContextMenuRegistrationHandler.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>

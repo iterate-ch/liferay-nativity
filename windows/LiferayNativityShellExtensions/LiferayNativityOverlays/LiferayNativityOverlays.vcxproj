@@ -112,12 +112,10 @@
     <ClCompile Include="DllMain.cpp" />
     <ClCompile Include="LiferayNativityOverlay.cpp" />
     <ClCompile Include="NativityOverlayFactory.cpp" />
-    <ClCompile Include="NativityOverlayRegistrationHandler.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LiferayNativityOverlay.h" />
     <ClInclude Include="NativityOverlayFactory.h" />
-    <ClInclude Include="NativityOverlayRegistrationHandler.h" />
     <ClInclude Include="OverlayConstants.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />

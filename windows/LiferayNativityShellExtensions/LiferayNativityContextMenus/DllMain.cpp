@@ -14,7 +14,6 @@
 
 #include "stdafx.h"
 #include "ContextMenuFactory.h"
-#include "NativityContextMenuRegistrationHandler.h"
 #include "ContextMenuConstants.h"
 #include <Guiddef.h>
 
@@ -80,82 +79,4 @@ STDAPI DllGetClassObject(REFCLSID rclsid, REFIID riid, void** ppv)
 STDAPI DllCanUnloadNow(void)
 {
 	return dllReferenceCount > 0 ? S_FALSE : S_OK;
-}
-
-HRESULT _stdcall DllRegisterServer(void)
-{
-	HRESULT hResult = S_OK;
-
-	wchar_t szModule[MAX_PATH];
-
-	if (GetModuleFileName(instanceHandle, szModule, ARRAYSIZE(szModule)) == 0)
-	{
-		hResult = HRESULT_FROM_WIN32(GetLastError());
-
-		return hResult;
-	}
-
-	GUID guid;
-
-	hResult = CLSIDFromString(CONTEXT_MENU_GUID, (LPCLSID)&guid);
-
-	if (FAILED(hResult))
-	{
-		return hResult;
-	}
-
-	hResult = NativityContextMenuRegistrationHandler::RegisterCOMObject(szModule, guid);
-
-	if (FAILED(hResult))
-	{
-		return hResult;
-	}
-
-	hResult = NativityContextMenuRegistrationHandler::MakeRegistryEntries(guid);
-
-	if (FAILED(hResult))
-	{
-		return hResult;
-	}
-
-	return S_OK;
-}
-
-STDAPI DllUnregisterServer(void)
-{
-	HRESULT hResult = S_OK;
-
-	wchar_t szModule[MAX_PATH];
-
-	if (GetModuleFileName(instanceHandle, szModule, ARRAYSIZE(szModule)) == 0)
-	{
-		hResult = HRESULT_FROM_WIN32(GetLastError());
-
-		return hResult;
-	}
-
-	GUID guid;
-
-	hResult = CLSIDFromString(CONTEXT_MENU_GUID, (LPCLSID)&guid);
-
-	if (FAILED(hResult))
-	{
-		return hResult;
-	}
-
-	hResult = NativityContextMenuRegistrationHandler::UnregisterCOMObject(guid);
-
-	if (FAILED(hResult))
-	{
-		return hResult;
-	}
-
-	hResult = NativityContextMenuRegistrationHandler::RemoveRegistryEntries();
-
-	if (FAILED(hResult))
-	{
-		return hResult;
-	}
-
-	return S_OK;
 }

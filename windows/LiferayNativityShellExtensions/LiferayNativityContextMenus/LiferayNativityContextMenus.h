@@ -35,7 +35,7 @@ struct LiferayNativityContextMenus : winrt::implements<LiferayNativityContextMen
 		IFACEMETHODIMP QueryContextMenu(HMENU hMenu, UINT indexMenu, UINT idCmdFirst, UINT idCmdLast, UINT uFlags);
 
 	private:
-		int _AddMenu(HMENU, ContextMenuItem*, int, int, UINT);
+		int _AddMenu(HMENU, ContextMenuItem&, int, int, UINT);
 		
 		HRESULT _ConvertBufferToPARGB32(HPAINTBUFFER hPaintBuffer, HDC hdc, HICON hicon, SIZE& sizIcon);
 		
@@ -55,13 +55,13 @@ struct LiferayNativityContextMenus : winrt::implements<LiferayNativityContextMen
 
 		bool _InsertSeparator(HMENU, int);
 
-		bool _InsertMenu(HMENU, HMENU, int, const wchar_t*, bool);
+		bool _InsertMenu(HMENU, HMENU, int, const wstring&, bool);
 
-		bool _InsertMenu(HMENU, int, int, const wchar_t*, bool);
+		bool _InsertMenu(HMENU, int, int, const wstring&, bool);
 
 		void _PerformAction(int actionIndex, HWND hWnd);
 
-		ContextMenuUtil* _contextMenuUtil;
+		std::unique_ptr<ContextMenuUtil> _contextMenuUtil;
 
 		UINT _nFiles;
 };

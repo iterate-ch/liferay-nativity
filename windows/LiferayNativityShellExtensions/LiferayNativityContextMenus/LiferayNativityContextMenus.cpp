@@ -16,8 +16,9 @@
 #include "LiferayNativityContextMenus.h"
 #include <shellapi.h>
 #include "ContextMenuUtil.h"
+#include "StringUtil.h"
 
-LiferayNativityContextMenus::LiferayNativityContextMenus(): _contextMenuUtil(0), _nFiles(0)
+LiferayNativityContextMenus::LiferayNativityContextMenus() : _contextMenuUtil(nullptr), _nFiles(0)
 {
 }
 
@@ -28,33 +29,28 @@ IFACEMETHODIMP LiferayNativityContextMenus::GetCommandString(UINT_PTR idCommand,
 
 	switch (uFlags)
 	{
-		case GCS_HELPTEXTW:
-			if (!_contextMenuUtil->GetContextMenuItem((int)idCommand, &item))
-			{
-				return E_FAIL;
-			}
+	case GCS_HELPTEXTW:
+		if (!_contextMenuUtil->GetContextMenuItem((int)idCommand, item))
+		{
+			return E_FAIL;
+		}
 
-			if (item->GetHelpText() == 0)
-			{
-				return E_FAIL;
-			}
+		wcscpy_s((wchar_t*)pszName, cchMax, item->GetHelpText().c_str());
 
-			wcscpy_s((wchar_t*)pszName, cchMax, item->GetHelpText()->c_str());
+		break;
 
-			break;
+	case GCS_VERBW:
+		if (!_contextMenuUtil->GetContextMenuItem((int)idCommand, item))
+		{
+			return E_FAIL;
+		}
 
-		case GCS_VERBW:
-			if (!_contextMenuUtil->GetContextMenuItem((int)idCommand, &item))
-			{
-				return E_FAIL;
-			}
+		_itow_s(item->GetId(), (wchar_t*)pszName, cchMax, 10);
 
-			_itow_s(item->GetId(), (wchar_t*)pszName, cchMax, 10);
+		break;
 
-			break;
-
-		default:
-			hResult = S_OK;
+	default:
+		hResult = S_OK;
 	}
 
 	return hResult;
@@ -84,7 +80,7 @@ IFACEMETHODIMP LiferayNativityContextMenus::Initialize(LPCITEMIDLIST pidlFolder,
 
 		if (_nFiles > 0)
 		{
-			_contextMenuUtil = new ContextMenuUtil();
+			_contextMenuUtil = make_unique<ContextMenuUtil>();
 			wchar_t szFileName[MAX_PATH];
 
 			for (UINT i = 0; i < _nFiles; i++)
@@ -115,7 +111,7 @@ IFACEMETHODIMP LiferayNativityContextMenus::Initialize(LPCITEMIDLIST pidlFolder,
 
 		_nFiles = 1;
 
-		_contextMenuUtil = new ContextMenuUtil();
+		_contextMenuUtil = make_unique<ContextMenuUtil>();
 
 		_contextMenuUtil->AddFile(folderPath);
 	}
@@ -125,9 +121,9 @@ IFACEMETHODIMP LiferayNativityContextMenus::Initialize(LPCITEMIDLIST pidlFolder,
 
 IFACEMETHODIMP LiferayNativityContextMenus::InvokeCommand(LPCMINVOKECOMMANDINFO pici)
 {
-	if (_contextMenuUtil == 0)
+	if (!_contextMenuUtil)
 	{
-		_contextMenuUtil = new ContextMenuUtil();
+		_contextMenuUtil = make_unique<ContextMenuUtil>();
 	}
 
 	bool unicode = false;
@@ -143,31 +139,12 @@ IFACEMETHODIMP LiferayNativityContextMenus::InvokeCommand(LPCMINVOKECOMMANDINFO 
 
 	if (!unicode && HIWORD(pici->lpVerb))
 	{
-		size_t num_chars;
-
-		string command = pici->lpVerb;
-
-		wchar_t* buf = new wchar_t[ command.size() ];
-
-		errno_t result = mbstowcs_s(&num_chars, buf, command.size(), command.c_str(), _TRUNCATE);
-
-		if (result != 0)
-		{
-			return E_FAIL;
-		}
-
-		wstring* wcommand = new wstring(buf, num_chars);
-
-		index = _wtoi(wcommand->c_str());
-
-		delete[] buf;
+		index = atoi(pici->lpVerb);
 
 	}
 	else if (unicode && HIWORD(((CMINVOKECOMMANDINFOEX*)pici)->lpVerbW))
 	{
-		wstring* wcommand = new wstring(((CMINVOKECOMMANDINFOEX*)pici)->lpVerbW);
-
-		index = _wtoi(wcommand->c_str());
+		index = _wtoi(((CMINVOKECOMMANDINFOEX*)pici)->lpVerbW);
 	}
 	else
 	{
@@ -210,22 +187,16 @@ IFACEMETHODIMP LiferayNativityContextMenus::QueryContextMenu(HMENU hMenu, UINT i
 		return MAKE_HRESULT(SEVERITY_SUCCESS, 0, USHORT(0));
 	}
 
-	vector<ContextMenuItem*>* menus = new vector<ContextMenuItem*>();
+	vector<ContextMenuItem*> menus;
 
 	if (!_contextMenuUtil->GetMenus(menus))
 	{
 		return MAKE_HRESULT(SEVERITY_SUCCESS, 0, USHORT(0));
 	}
 
-	if (menus == 0)
-	{
-		return MAKE_HRESULT(SEVERITY_SUCCESS, 0, USHORT(0));
-	}
-
 	//No menus for these files
-	if ((menus->size() == 0) || menus->empty())
+	if ((menus.size() == 0) || menus.empty())
 	{
-		delete menus;
 		return MAKE_HRESULT(SEVERITY_SUCCESS, 0, USHORT(0));
 	}
 
@@ -236,15 +207,13 @@ IFACEMETHODIMP LiferayNativityContextMenus::QueryContextMenu(HMENU hMenu, UINT i
 	int cmdCount = idCmdFirst;
 
 	_InsertSeparator(hMenu, location);
-		
+
 	location++;
 
 	cmdCount++;
 
-	for (vector<ContextMenuItem*>::iterator it = menus->begin(); it != menus->end(); it++)
-	{
-		ContextMenuItem* menu = *it;
-		cmdCount = _AddMenu(hMenu, menu, location, cmdCount, idCmdFirst);
+	for (auto it : menus) {
+		cmdCount = _AddMenu(hMenu, *it, location, cmdCount, idCmdFirst);
 
 		location++;
 	}
@@ -256,13 +225,13 @@ IFACEMETHODIMP LiferayNativityContextMenus::QueryContextMenu(HMENU hMenu, UINT i
 	return MAKE_HRESULT(SEVERITY_SUCCESS, 0, cmdCount - idCmdFirst + 1);
 }
 
-int LiferayNativityContextMenus::_AddMenu(HMENU hMenu, ContextMenuItem* menu, int location, int cmdCount, UINT offset)
+int LiferayNativityContextMenus::_AddMenu(HMENU hMenu, ContextMenuItem& menu, int location, int cmdCount, UINT offset)
 {
-	wstring* text = menu->GetTitle();
+	wstring text = menu.GetTitle();
 
-	menu->SetIndex(cmdCount - offset);
+	menu.SetIndex(cmdCount - offset);
 
-	if (text->compare(SEPARATOR) == 0)
+	if (text.compare(SEPARATOR) == 0)
 	{
 		if (_InsertSeparator(hMenu, location))
 		{
@@ -270,31 +239,27 @@ int LiferayNativityContextMenus::_AddMenu(HMENU hMenu, ContextMenuItem* menu, in
 		}
 	}
 	else {
-		if (menu->HasSubMenus())
+		if (menu.HasSubMenus())
 		{
 			HMENU subMenuHandle = CreatePopupMenu();
 
-			if (_InsertMenu(hMenu, subMenuHandle, location, text->c_str(), menu->GetEnabled()))
+			if (_InsertMenu(hMenu, subMenuHandle, location, text, menu.GetEnabled()))
 			{
 				cmdCount++;
 
 				int subLocation = 0;
 
-				vector<ContextMenuItem*>* menus = menu->GetContextMenuItems();
+				auto menus{ menu.GetContextMenuItems() };
 
-				for (vector<ContextMenuItem*>::iterator it = menus->begin(); it != menus->end(); it++)
-				{
-					ContextMenuItem* menuA = *it;
-
-					cmdCount = _AddMenu(subMenuHandle, menuA, subLocation, cmdCount, offset);
-
+				for (auto it : menus) {
+					cmdCount = _AddMenu(subMenuHandle, *it, subLocation, cmdCount, offset);
 					subLocation++;
 				}
 			}
 		}
 		else
 		{
-			if (_InsertMenu(hMenu, location, cmdCount, text->c_str(), menu->GetEnabled()))
+			if (_InsertMenu(hMenu, location, cmdCount, text.c_str(), menu.GetEnabled()))
 			{
 				cmdCount++;
 			}
@@ -303,8 +268,8 @@ int LiferayNativityContextMenus::_AddMenu(HMENU hMenu, ContextMenuItem* menu, in
 		SIZE sizIcon;
 		sizIcon.cx = GetSystemMetrics(SM_CXSMICON);
 		sizIcon.cy = GetSystemMetrics(SM_CYSMICON);
-		HICON hIcon = (HICON)LoadImage(NULL, menu->GetIconPath()->c_str(), IMAGE_ICON, sizIcon.cx, sizIcon.cy, LR_LOADFROMFILE);
-		
+		HICON hIcon = (HICON)LoadImage(NULL, menu.GetIconPath().c_str(), IMAGE_ICON, sizIcon.cx, sizIcon.cy, LR_LOADFROMFILE);
+
 		if (hIcon != NULL)
 		{
 			HBITMAP bitmap = _IconToBitmapPARGB32(hIcon);
@@ -318,13 +283,13 @@ int LiferayNativityContextMenus::_AddMenu(HMENU hMenu, ContextMenuItem* menu, in
 
 HRESULT LiferayNativityContextMenus::_ConvertBufferToPARGB32(HPAINTBUFFER hPaintBuffer, HDC hdc, HICON hicon, SIZE& sizIcon)
 {
-	RGBQUAD *prgbQuad;
+	RGBQUAD* prgbQuad;
 	int cxRow;
 	HRESULT hResult = GetBufferedPaintBits(hPaintBuffer, &prgbQuad, &cxRow);
 
 	if (SUCCEEDED(hResult))
 	{
-		Gdiplus::ARGB *pargb = reinterpret_cast<Gdiplus::ARGB *>(prgbQuad);
+		Gdiplus::ARGB* pargb = reinterpret_cast<Gdiplus::ARGB*>(prgbQuad);
 
 		if (!_HasAlpha(pargb, sizIcon, cxRow))
 		{
@@ -347,7 +312,7 @@ HRESULT LiferayNativityContextMenus::_ConvertBufferToPARGB32(HPAINTBUFFER hPaint
 	return hResult;
 }
 
-HRESULT LiferayNativityContextMenus::_ConvertToPARGB32(HDC hdc, __inout Gdiplus::ARGB *pargb, HBITMAP hbmp, SIZE& sizImage, int cxRow)
+HRESULT LiferayNativityContextMenus::_ConvertToPARGB32(HDC hdc, __inout Gdiplus::ARGB* pargb, HBITMAP hbmp, SIZE& sizImage, int cxRow)
 {
 	BITMAPINFO bmi;
 	SecureZeroMemory(&bmi, sizeof(bmi));
@@ -359,9 +324,9 @@ HRESULT LiferayNativityContextMenus::_ConvertToPARGB32(HDC hdc, __inout Gdiplus:
 	bmi.bmiHeader.biBitCount = 32;
 
 	HANDLE hHeap = GetProcessHeap();
-	
-	void *pvBits = HeapAlloc(hHeap, 0, bmi.bmiHeader.biWidth * 4 * bmi.bmiHeader.biHeight);
-	
+
+	void* pvBits = HeapAlloc(hHeap, 0, bmi.bmiHeader.biWidth * 4 * bmi.bmiHeader.biHeight);
+
 	if (pvBits == 0)
 	{
 		return E_OUTOFMEMORY;
@@ -372,7 +337,7 @@ HRESULT LiferayNativityContextMenus::_ConvertToPARGB32(HDC hdc, __inout Gdiplus:
 	if (GetDIBits(hdc, hbmp, 0, bmi.bmiHeader.biHeight, pvBits, &bmi, DIB_RGB_COLORS) == bmi.bmiHeader.biHeight)
 	{
 		ULONG cxDelta = cxRow - bmi.bmiHeader.biWidth;
-		Gdiplus::ARGB *pargbMask = static_cast<Gdiplus::ARGB *>(pvBits);
+		Gdiplus::ARGB* pargbMask = static_cast<Gdiplus::ARGB*>(pvBits);
 
 		for (ULONG y = bmi.bmiHeader.biHeight; y; --y)
 		{
@@ -400,7 +365,7 @@ HRESULT LiferayNativityContextMenus::_ConvertToPARGB32(HDC hdc, __inout Gdiplus:
 	return hResult;
 }
 
-HRESULT LiferayNativityContextMenus::_Create32BitHBITMAP(HDC hdc, const SIZE *psize, __deref_opt_out void **ppvBits, __out HBITMAP* phBmp)
+HRESULT LiferayNativityContextMenus::_Create32BitHBITMAP(HDC hdc, const SIZE* psize, __deref_opt_out void** ppvBits, __out HBITMAP* phBmp)
 {
 	if (psize == 0)
 		return E_INVALIDARG;
@@ -434,7 +399,7 @@ HRESULT LiferayNativityContextMenus::_Create32BitHBITMAP(HDC hdc, const SIZE *ps
 	return (NULL == *phBmp) ? E_OUTOFMEMORY : S_OK;
 }
 
-bool LiferayNativityContextMenus::_HasAlpha(__in Gdiplus::ARGB *pargb, SIZE& sizImage, int cxRow)
+bool LiferayNativityContextMenus::_HasAlpha(__in Gdiplus::ARGB* pargb, SIZE& sizImage, int cxRow)
 {
 	ULONG cxDelta = cxRow - sizImage.cx;
 
@@ -505,13 +470,13 @@ HBITMAP LiferayNativityContextMenus::_IconToBitmapPARGB32(HICON hIcon)
 	return hBmp;
 }
 
-bool LiferayNativityContextMenus::_InsertMenu(HMENU hMenu, HMENU subMenuHandle, int location, const wchar_t* text, bool enabled)
+bool LiferayNativityContextMenus::_InsertMenu(HMENU hMenu, HMENU subMenuHandle, int location, const wstring& const text, bool enabled)
 {
 	MENUITEMINFO menuItem = { sizeof(menuItem) };
 
 	menuItem.fMask = MIIM_STRING | MIIM_SUBMENU | MIIM_STATE;
 
-	menuItem.dwTypeData = (LPWSTR)text;
+	menuItem.dwTypeData = (LPWSTR)text.c_str();
 
 	menuItem.hSubMenu = subMenuHandle;
 
@@ -525,13 +490,13 @@ bool LiferayNativityContextMenus::_InsertMenu(HMENU hMenu, HMENU subMenuHandle, 
 	return true;
 }
 
-bool LiferayNativityContextMenus::_InsertMenu(HMENU hMenu, int location, int command, const wchar_t* text, bool enabled)
+bool LiferayNativityContextMenus::_InsertMenu(HMENU hMenu, int location, int command, const wstring& const text, bool enabled)
 {
 	MENUITEMINFO menuItem = { sizeof(menuItem) };
 
 	menuItem.fMask = MIIM_STRING | MIIM_ID | MIIM_STATE;
 
-	menuItem.dwTypeData = (LPWSTR)text;
+	menuItem.dwTypeData = (LPWSTR)text.c_str();
 
 	menuItem.wID = command;
 

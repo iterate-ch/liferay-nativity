@@ -14,45 +14,39 @@
 
 #pragma once
 
-#include <CommunicationSocket.h>
 #include <json/json.h>
 #include <NativityMessage.h>
 #include "ContextMenuAction.h"
 #include "ContextMenuItem.h"
 
-class __declspec(dllexport) ContextMenuUtil
+struct ContextMenuUtil
 {
-	public:
-		ContextMenuUtil();
+	bool AddFile(const std::wstring&);
 
-		~ContextMenuUtil(void);
+	bool GetMenus(std::vector<ContextMenuItem*>&);
 
-		bool AddFile(std::wstring);
+	bool GetContextMenuItem(int, ContextMenuItem*&);
 
-		bool GetMenus(std::vector<ContextMenuItem*>*);
+	bool GetContextMenuAction(const std::wstring&, std::unique_ptr<ContextMenuAction>&);
 
-		bool GetContextMenuItem(int, ContextMenuItem**);
+	bool GetContextMenuAction(int action, std::unique_ptr<ContextMenuAction>&);
 
-		bool GetContextMenuAction(std::wstring*, ContextMenuAction**);
+	bool IsMenuNeeded(void);
 
-		bool GetContextMenuAction(int action, ContextMenuAction**);
+	bool InitMenus(void);
 
-		bool IsMenuNeeded(void);
+	bool PerformAction(int, HWND hWnd);
 
-		bool InitMenus(void);
+private:
+	bool _GetContextMenuItem(int, const std::vector<ContextMenuItem*>&, ContextMenuItem*&);
 
-		bool PerformAction(int, HWND hWnd);
+	bool _ParseContextMenuList(std::wstring, std::vector<std::unique_ptr<ContextMenuItem>>);
 
-	private:
-		bool _GetContextMenuItem(int, std::vector<ContextMenuItem*>*, ContextMenuItem**);
+	bool _ParseContextMenuItem(const Json::Value&, ContextMenuItem&);
 
-		bool _ParseContextMenuList(std::wstring*, std::vector<ContextMenuItem*>*);
+	bool _ProcessContextMenus(NativityMessage);
 
-		bool _ParseContextMenuItem(const Json::Value&, ContextMenuItem*);
+	std::vector<std::unique_ptr<ContextMenuItem>> _menuList;
 
-		bool _ProcessContextMenus(NativityMessage*);
-
-		std::vector<ContextMenuItem*>* _menuList;
-
-		std::vector<std::wstring>* _selectedFiles;
+	std::vector<std::wstring> _selectedFiles;
 };

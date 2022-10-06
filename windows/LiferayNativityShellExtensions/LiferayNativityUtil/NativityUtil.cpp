@@ -15,16 +15,15 @@ constexpr CLSID CLSID_Nativity = __uuidof(Nativity);
 using namespace winrt;
 using namespace impl;
 
-bool Connect(com_ptr<INativity>& const nativity) {
-	com_ptr<IObjectProvider> objectProvider;
-	if (FAILED(CoGetClassObject(CLSID_ObjectProvider, CLSCTX_LOCAL_SERVER, 0, IID_PPV_ARGS(objectProvider.put())))) {
-		return false;
-	}
-	return SUCCEEDED(objectProvider->QueryObject(CLSID_ObjectProvider, IID_PPV_ARGS(nativity.put())));
+_COM_SMARTPTR_TYPEDEF(IObjectProvider, IID_IObjectProvider);
+
+bool Connect(INativityPtr& nativity) {
+	IObjectProviderPtr objectProvider { CLSID_ObjectProvider };
+	return SUCCEEDED(objectProvider->QueryObject(CLSID_Nativity, IID_PPV_ARGS(&nativity)));
 }
 
 bool NativityUtil::IsFileFiltered(std::wstring file) {
-	com_ptr<INativity> nativity;
+	INativityPtr nativity;
 	if (!Connect(nativity)) {
 		return false;
 	}
@@ -36,8 +35,21 @@ bool NativityUtil::IsFileFiltered(std::wstring file) {
 	return filtered;
 }
 
+bool NativityUtil::OverlaysEnabled() {
+	INativityPtr nativity;
+	if (!Connect(nativity)) {
+		return false;
+	}
+
+	VARIANT_BOOL enabled;
+	if (FAILED(nativity->OverlaysEnabled(&enabled))) {
+		return false;
+	}
+	return enabled;
+}
+
 bool NativityUtil::ReceiveResponse(std::wstring message, std::wstring& const response) {
-	com_ptr<INativity> nativity;
+	INativityPtr nativity;
 	if (!Connect(nativity)) {
 		return false;
 	}
@@ -49,45 +61,3 @@ bool NativityUtil::ReceiveResponse(std::wstring message, std::wstring& const res
 	response.assign(responseHandle.get());
 	return true;
 }
-
-//bool Connect(INativity& const nativity) {
-//	com_ptr<IObjectProvider> provider;
-//	if (FAILED(CoGetClassObject(CLSID_NativityEndpoint, CLSCTX_LOCAL_SERVER, NULL, IID_PPV_ARGS(provider.put())))) {
-//		return false;
-//	}
-//
-//	HRESULT result = provider->QueryObject(CLSID_NativityEndpoint, guid_of<INativity>(), (void**)&nativity);
-//	if (FAILED(result)) {
-//		return false;
-//	}
-//	return true;
-//}
-//
-//bool NativityUtil::IsFileFiltered(const std::wstring const file) {
-//	INativity nativity;
-//	if (!Connect(nativity)) {
-//		return false;
-//	}
-//
-//	try {
-//		return nativity.IsFiltered(file);
-//	}
-//	catch (...) {
-//		return false;
-//	}
-//}
-//
-//bool NativityUtil::ReceiveResponse(const std::wstring const message, std::wstring& const response) {
-//	INativity nativity;
-//	if (!Connect(nativity)) {
-//		return false;
-//	}
-//
-//	try {
-//		response = nativity.ReceiveMessage(message);
-//		return true;
-//	}
-//	catch (...) {
-//		return false;
-//	}
-//}

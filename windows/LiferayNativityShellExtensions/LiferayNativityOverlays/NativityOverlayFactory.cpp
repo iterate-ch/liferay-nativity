@@ -14,7 +14,7 @@
 
 #include "stdafx.h"
 #include "NativityOverlayFactory.h"
-#include <LiferayNativityOverlay.h>
+#include "LiferayNativityOverlay.h"
 
 extern long dllReferenceCount;
 
