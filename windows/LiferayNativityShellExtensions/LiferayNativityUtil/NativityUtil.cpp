@@ -18,8 +18,13 @@ using namespace impl;
 _COM_SMARTPTR_TYPEDEF(IObjectProvider, IID_IObjectProvider);
 
 bool Connect(INativityPtr& nativity) {
-	IObjectProviderPtr objectProvider { CLSID_ObjectProvider };
-	return SUCCEEDED(objectProvider->QueryObject(CLSID_Nativity, IID_PPV_ARGS(&nativity)));
+	try {
+		IObjectProviderPtr objectProvider{ CLSID_ObjectProvider };
+		return SUCCEEDED(objectProvider->QueryObject(CLSID_Nativity, IID_PPV_ARGS(&nativity)));
+	}
+	catch (_com_error com) {
+		return false;
+	}
 }
 
 bool NativityUtil::IsFileFiltered(std::wstring file) {

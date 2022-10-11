@@ -18,27 +18,17 @@
 
 extern long dllReferenceCount;
 
-ContextMenuFactory::ContextMenuFactory(wchar_t* modulePath) : _modulePath(modulePath)
-{
-}
-
 IFACEMETHODIMP ContextMenuFactory::CreateInstance(
     IUnknown* pUnkOuter, REFIID riid, void** ppv)
 {
-	HRESULT hResult = CLASS_E_NOAGGREGATION;
-
-	if (pUnkOuter != NULL)
-	{
-		return hResult;
+	if (pUnkOuter != NULL) {
+		return CLASS_E_NOAGGREGATION;
 	}
-
-	hResult = E_OUTOFMEMORY;
-
+	
 	auto liferayNativityContextMenus{ winrt::make<LiferayNativityContextMenus>() };
-
 	if (!liferayNativityContextMenus)
 	{
-		return hResult;
+		return E_FAIL;
 	}
 
 	return liferayNativityContextMenus.as(riid, ppv);

@@ -18,7 +18,7 @@
 
 extern long dllReferenceCount;
 
-NativityOverlayFactory::NativityOverlayFactory(wchar_t* path) : _path(path)
+NativityOverlayFactory::NativityOverlayFactory()
 {
 	InterlockedIncrement(&dllReferenceCount);
 }
@@ -29,7 +29,7 @@ NativityOverlayFactory::~NativityOverlayFactory()
 }
 
 IFACEMETHODIMP NativityOverlayFactory::CreateInstance(
-    IUnknown* pUnkOuter, REFIID riid, void** ppv)
+	IUnknown* pUnkOuter, REFIID riid, void** ppv)
 {
 	HRESULT hResult = CLASS_E_NOAGGREGATION;
 

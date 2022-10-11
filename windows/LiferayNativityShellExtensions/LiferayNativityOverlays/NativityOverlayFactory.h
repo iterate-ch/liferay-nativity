@@ -18,14 +18,9 @@
 
 struct NativityOverlayFactory : winrt::implements<NativityOverlayFactory, IClassFactory>
 {
-		NativityOverlayFactory(wchar_t* path);
+	NativityOverlayFactory() = default;
 
-		~NativityOverlayFactory();
+	IFACEMETHODIMP CreateInstance(IUnknown* pUnkOuter, REFIID riid, void** ppv);
 
-		IFACEMETHODIMP CreateInstance(IUnknown* pUnkOuter, REFIID riid, void** ppv);
-
-		IFACEMETHODIMP LockServer(BOOL fLock);
-
-	private:
-		wchar_t* _path;
+	IFACEMETHODIMP LockServer(BOOL fLock);
 };

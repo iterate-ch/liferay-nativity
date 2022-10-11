@@ -16,12 +16,9 @@
 
 struct ContextMenuFactory : winrt::implements<ContextMenuFactory, IClassFactory>
 {
-		ContextMenuFactory(wchar_t*);
+		ContextMenuFactory() = default;
 
 		IFACEMETHODIMP CreateInstance(IUnknown* pUnkOuter, REFIID riid, void** ppv);
 
 		IFACEMETHODIMP LockServer(BOOL fLock);
-
-	private:
-		wchar_t* _modulePath;
 };
