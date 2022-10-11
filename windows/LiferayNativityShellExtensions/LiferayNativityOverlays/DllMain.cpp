@@ -19,7 +19,6 @@ HINSTANCE instanceHandle = NULL;
 
 long dllReferenceCount = 0;
 
-
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD dwReason, LPVOID lpReserved)
 {
 	switch (dwReason)
@@ -40,7 +39,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD dwReason, LPVOID lpReserved)
 STDAPI DllGetClassObject(REFCLSID rclsid, REFIID riid, void** ppv)
 {
 	GUID guid;
-	if (FAILED(CLSIDFromString(OVERLAY_GUID, (LPCLSID)&guid) || !IsEqualCLSID(guid, rclsid))) {
+	if (FAILED(CLSIDFromString(OVERLAY_GUID, (LPCLSID)&guid)) || !IsEqualCLSID(guid, rclsid)) {
 		return CLASS_E_CLASSNOTAVAILABLE;
 	}
 
