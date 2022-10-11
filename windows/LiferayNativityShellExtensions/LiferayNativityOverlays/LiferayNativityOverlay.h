@@ -18,8 +18,7 @@
 
 struct LiferayNativityOverlay : winrt::implements<LiferayNativityOverlay, IShellIconOverlayIdentifier>
 {
-		LiferayNativityOverlay();
-		~LiferayNativityOverlay();
+		LiferayNativityOverlay() = default;
 
 		IFACEMETHODIMP GetOverlayInfo(PWSTR pwszIconFile, int cchMax, int* pIndex, DWORD* pdwFlags);
 

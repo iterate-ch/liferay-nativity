@@ -18,7 +18,8 @@
 
 struct NativityOverlayFactory : winrt::implements<NativityOverlayFactory, IClassFactory>
 {
-	NativityOverlayFactory() = default;
+	NativityOverlayFactory();
+	~NativityOverlayFactory();
 
 	IFACEMETHODIMP CreateInstance(IUnknown* pUnkOuter, REFIID riid, void** ppv);
 

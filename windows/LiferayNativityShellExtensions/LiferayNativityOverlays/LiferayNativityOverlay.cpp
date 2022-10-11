@@ -28,12 +28,6 @@ extern HINSTANCE instanceHandle;
 #define IDM_DISPLAY 0
 #define IDB_OK 101
 
-LiferayNativityOverlay::LiferayNativityOverlay()
-{
-}
-LiferayNativityOverlay::~LiferayNativityOverlay() {
-}
-
 IFACEMETHODIMP LiferayNativityOverlay::GetPriority(int* pPriority)
 {
 	pPriority = 0;

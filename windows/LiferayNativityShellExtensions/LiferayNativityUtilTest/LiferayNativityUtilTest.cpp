@@ -16,8 +16,16 @@ namespace LiferayNativityUtilTest
 		{
 		}
 
+		TEST_METHOD(TestComOverlaysEnabled)
+		{
+			CoInitializeEx(0, COINIT_MULTITHREADED);
+			NativityUtil::OverlaysEnabled();
+		}
+
 		TEST_METHOD(TestComFiltered)
 		{
+			CoInitializeEx(0, COINIT_MULTITHREADED);
+			NativityUtil::IsFileFiltered(L"TEST");
 		}
 
 		TEST_METHOD(TestComMessage)

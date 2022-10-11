@@ -30,7 +30,10 @@ bool NativityUtil::IsFileFiltered(std::wstring file) {
 	}
 
 	VARIANT_BOOL filtered;
-	if (FAILED(nativity->IsFiltered(file.data(), &filtered))) {
+	try {
+		check_hresult(nativity->IsFiltered(file.data(), &filtered));
+	}
+	catch (...) {
 		return false;
 	}
 	return filtered;
@@ -43,7 +46,10 @@ bool NativityUtil::OverlaysEnabled() {
 	}
 
 	VARIANT_BOOL enabled;
-	if (FAILED(nativity->OverlaysEnabled(&enabled))) {
+	try {
+		check_hresult(nativity->OverlaysEnabled(&enabled));
+	}
+	catch (...) {
 		return false;
 	}
 	return enabled;
@@ -56,7 +62,10 @@ bool NativityUtil::ReceiveResponse(std::wstring message, std::wstring& const res
 	}
 
 	bstr_handle responseHandle;
-	if (FAILED(nativity->ReceiveMessage(message.data(), responseHandle.put()))) {
+	try {
+		check_hresult(nativity->ReceiveMessage(message.data(), responseHandle.put()));
+	}
+	catch (...) {
 		return false;
 	}
 	response.assign(responseHandle.get());
