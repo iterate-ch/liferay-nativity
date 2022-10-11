@@ -15,16 +15,12 @@ constexpr CLSID CLSID_Nativity = __uuidof(Nativity);
 using namespace winrt;
 using namespace impl;
 
-_COM_SMARTPTR_TYPEDEF(IObjectProvider, IID_IObjectProvider);
-
 bool Connect(INativityPtr& nativity) {
-	try {
-		IObjectProviderPtr objectProvider{ CLSID_ObjectProvider };
-		return SUCCEEDED(objectProvider->QueryObject(CLSID_Nativity, IID_PPV_ARGS(&nativity)));
-	}
-	catch (_com_error com) {
+	auto objectProvider{ try_create_instance<IObjectProvider>(CLSID_ObjectProvider, CLSCTX_ALL) };
+	if (!objectProvider) {
 		return false;
 	}
+	return SUCCEEDED(objectProvider->QueryObject(CLSID_Nativity, IID_PPV_ARGS(&nativity)));
 }
 
 bool NativityUtil::IsFileFiltered(std::wstring file) {
