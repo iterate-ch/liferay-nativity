@@ -40,39 +40,16 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD dwReason, LPVOID lpReserved)
 
 STDAPI DllGetClassObject(REFCLSID rclsid, REFIID riid, void** ppv)
 {
-	HRESULT hResult = CLASS_E_CLASSNOTAVAILABLE;
-
 	GUID guid;
-
-	hResult = CLSIDFromString(CONTEXT_MENU_GUID, (LPCLSID)&guid);
-
-	if (FAILED(hResult))
+	if (FAILED(CLSIDFromString(CONTEXT_MENU_GUID, (LPCLSID)&guid)) || !IsEqualCLSID(guid, rclsid))
 	{
-		return hResult;
+		return CLASS_E_CLASSNOTAVAILABLE;
 	}
 
-	if (!IsEqualCLSID(guid, rclsid))
-	{
-		return hResult;
-	}
-
-	hResult = E_OUTOFMEMORY;
-
-	wchar_t szModule[MAX_PATH];
-
-	if (GetModuleFileName(instanceHandle, szModule, ARRAYSIZE(szModule)) == 0)
-	{
-		hResult = HRESULT_FROM_WIN32(GetLastError());
-
-		return hResult;
-	}
-
-	hResult = E_OUTOFMEMORY;
-	auto contextMenuFactory{ winrt::make<ContextMenuFactory>(szModule) };
+	auto contextMenuFactory{ winrt::make<ContextMenuFactory>() };
 	if (!contextMenuFactory) {
-		return hResult;
+		return E_FAIL;
 	}
-
 	return contextMenuFactory.as(riid, ppv);
 }
 

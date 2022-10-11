@@ -39,44 +39,20 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD dwReason, LPVOID lpReserved)
 
 STDAPI DllGetClassObject(REFCLSID rclsid, REFIID riid, void** ppv)
 {
-	HRESULT hResult = CLASS_E_CLASSNOTAVAILABLE;
 	GUID guid;
-
-	hResult = CLSIDFromString(OVERLAY_GUID, (LPCLSID)&guid);
-
-	if (hResult != S_OK)
-	{
-		return hResult;
+	if (FAILED(CLSIDFromString(OVERLAY_GUID, (LPCLSID)&guid) || !IsEqualCLSID(guid, rclsid))) {
+		return CLASS_E_CLASSNOTAVAILABLE;
 	}
 
-	if (!IsEqualCLSID(guid, rclsid))
+	auto nativityOverlayFactory{ winrt::make<NativityOverlayFactory>() };
+	if (!nativityOverlayFactory)
 	{
-		return hResult;
+		return E_FAIL;
 	}
-
-	hResult = E_OUTOFMEMORY;
-
-	wchar_t szModule[MAX_PATH];
-
-	if (GetModuleFileName(instanceHandle, szModule, ARRAYSIZE(szModule)) == 0)
-	{
-		hResult = HRESULT_FROM_WIN32(GetLastError());
-
-		return hResult;
-	}
-
-	auto nativityOverlayFactory{ winrt::make<NativityOverlayFactory>(szModule) };
-
-	if (nativityOverlayFactory)
-	{
-		hResult = nativityOverlayFactory.as(riid, ppv);
-	}
-	return hResult;
+	return nativityOverlayFactory.as(riid, ppv);
 }
 
 STDAPI DllCanUnloadNow(void)
 {
 	return dllReferenceCount > 0 ? S_FALSE : S_OK;
-
-	return S_FALSE;
 }
