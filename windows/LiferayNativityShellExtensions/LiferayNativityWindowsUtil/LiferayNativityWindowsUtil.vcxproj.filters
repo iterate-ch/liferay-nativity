@@ -24,21 +24,10 @@
     <ClInclude Include="com_liferay_nativity_control_win_WindowsNativityUtil.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="resource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ConfigurationUtil.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="LiferayNativityWindowsUtil.rc">
-      <Filter>Resource Files</Filter>
-    </ResourceCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="$(OutDir)INativity.tlb" />
   </ItemGroup>
 </Project>

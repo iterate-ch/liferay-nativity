@@ -76,9 +76,6 @@
       <AdditionalUsingDirectories>$(WindowsSDK_WindowsMetadata);%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
       <MultiProcessorCompilation>false</MultiProcessorCompilation>
     </ClCompile>
-    <ResourceCompile>
-      <AdditionalIncludeDirectories>$(OutDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    </ResourceCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -106,13 +103,9 @@
     <ClInclude Include="com_liferay_nativity_control_win_WindowsNativityUtil.h" />
     <ClInclude Include="ConfigConstants.h" />
     <ClInclude Include="ConfigurationUtil.h" />
-    <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ConfigurationUtil.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="LiferayNativityWindowsUtil.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

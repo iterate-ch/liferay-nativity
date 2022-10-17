@@ -74,10 +74,13 @@
       <AdditionalOptions Condition="'$(CppWinRTHeapEnforcement)'==''">/DWINRT_NO_MAKE_DETECTION %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
       <PreprocessorDefinitions>_WINRT_DLL;JSON_DLL_BUILD;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(OutDir);$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalUsingDirectories>$(WindowsSDK_WindowsMetadata);%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
       <MultiProcessorCompilation>false</MultiProcessorCompilation>
     </ClCompile>
+    <ResourceCompile>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -89,7 +92,6 @@
       <HeaderFileName>$(IntDir)%(Filename).h</HeaderFileName>
       <InterfaceIdentifierFileName>$(IntDir)%(Filename)_i.c</InterfaceIdentifierFileName>
       <ProxyFileName>$(IntDir)%(Filename)_p.c</ProxyFileName>
-      <TypeLibraryName>$(OutDir)%(Filename).tlb</TypeLibraryName>
     </Midl>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Debug'">
@@ -108,14 +110,16 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="$(IntDir)INativity.h" />
     <ClInclude Include="json\json.h" />
     <ClInclude Include="NativityUtil.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="StringUtil.h" />
     <ClInclude Include="NativityMessage.h" />
     <ClInclude Include="UtilConstants.h" />
-    <ClInclude Include="$(IntDir)INativity.tlh" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="$(IntDir)INativity_i.c" />
     <ClCompile Include="jsoncpp.cpp" />
     <ClCompile Include="NativityMessage.cpp" />
     <ClCompile Include="NativityUtil.cpp" />
@@ -123,6 +127,9 @@
   </ItemGroup>
   <ItemGroup>
     <Midl Include="INativity.idl" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resource.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

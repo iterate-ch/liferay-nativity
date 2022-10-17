@@ -1,0 +1,5 @@
+// In Microsoft Visual C++ generiertes Ressourcenskript.
+//
+#include "resource.h"
+
+IDR_INATIVITY TYPELIB "LiferayNativityUtil.tlb"
