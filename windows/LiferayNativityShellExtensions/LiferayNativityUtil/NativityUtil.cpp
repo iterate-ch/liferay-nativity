@@ -28,7 +28,7 @@ bool Connect(std::function<bool(INativityPtr)> Callback) {
 	IMonikerPtr nativityMoniker;
 	check_hresult(CreateClassMoniker(CLSID_Nativity, &nativityMoniker));
 
-	IMoniker* moniker;
+	IMonikerPtr moniker;
 	while (enumMoniker->Next(1, &moniker, nullptr) != S_FALSE) {
 		if (nativityMoniker->IsEqual(moniker) != S_OK) {
 			continue;
@@ -37,7 +37,6 @@ bool Connect(std::function<bool(INativityPtr)> Callback) {
 			IUnknownPtr unkn;
 			check_hresult(rot->GetObject(moniker, &unkn));
 			INativityPtr nativity{ unkn };
-			//check_hresult(unkn.QueryInterface(IID_PPV_ARGS(&nativity)));
 			if (Callback(nativity)) {
 				return true;
 			}
@@ -49,12 +48,12 @@ bool Connect(std::function<bool(INativityPtr)> Callback) {
 	return false;
 }
 
-bool NativityUtil::IsFileFiltered(std::wstring file) {
+bool NativityUtil::IsFileFiltered(const std::wstring& const file) {
 	try {
-		return Connect([&file](INativityPtr nativity) -> bool
+		return Connect([file](INativityPtr nativity) -> bool
 			{
 				VARIANT_BOOL filtered;
-				return SUCCEEDED(nativity->IsFiltered(file.data(), &filtered)) && filtered != VARIANT_FALSE;
+				return SUCCEEDED(nativity->IsFiltered((LPWSTR)file.data(), &filtered)) && filtered != VARIANT_FALSE;
 			});
 	}
 	catch (...) {
@@ -75,12 +74,12 @@ bool NativityUtil::OverlaysEnabled() {
 	}
 }
 
-bool NativityUtil::ReceiveResponse(std::wstring message, std::wstring& const response) {
+bool NativityUtil::ReceiveResponse(const std::wstring& const message, std::wstring& const response) {
 	try {
-		return Connect([&message, &response](INativityPtr nativity) -> bool
+		return Connect([message, &response](INativityPtr nativity) -> bool
 			{
 				bstr_handle responseHandle;
-				if (FAILED(nativity->ReceiveMessage(message.data(), responseHandle.put()))) {
+				if (FAILED(nativity->ReceiveMessage((LPWSTR)message.data(), responseHandle.put()))) {
 					return false;
 				}
 				response.assign(responseHandle.get());

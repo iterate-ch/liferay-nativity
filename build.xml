@@ -54,7 +54,7 @@
 		</copy>
 	</target>
 
-	<target name="build-windows-util" depends="java-home">
+	<target name="build-windows-util" depends="java-home,build-jni-headers">
 		<mkdir dir="${basedir}/dist/" />
 
 		<exec
@@ -76,10 +76,8 @@
 		/>
 	</target>
 
-	<target name="build-windows-native-util" depends="java-home">
+	<target name="build-windows-native-util" depends="java-home,build-jni-headers">
 		<mkdir dir="${basedir}/dist/" />
-
-		<antcall target="build-jni-headers" />
 
 		<exec
 			executable="${basedir}/build-windows.cmd"
@@ -110,7 +108,7 @@
 		/>
 	</target>
 
-	<target name="build-windows-menus" depends="java-home">
+	<target name="build-windows-menus" depends="java-home,build-windows-util">
 		<mkdir dir="${basedir}/dist/" />
 
 		<copy

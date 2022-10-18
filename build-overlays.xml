@@ -2,7 +2,7 @@
 
     <include file="build.xml"/>
 
-    <target name="overlays">
+    <target name="overlays" depends="liferay-nativity-java.build-windows-util">
         <ant target="build-windows-overlays" inheritAll="false">
             <property name="overlay.name" value="${overlay.name.infinite}"/>
             <property name="overlay.guid" value="${overlay.guid.infinite}"/>

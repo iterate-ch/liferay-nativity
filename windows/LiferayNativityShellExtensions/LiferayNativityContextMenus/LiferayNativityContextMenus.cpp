@@ -58,6 +58,8 @@ IFACEMETHODIMP LiferayNativityContextMenus::GetCommandString(UINT_PTR idCommand,
 
 IFACEMETHODIMP LiferayNativityContextMenus::Initialize(LPCITEMIDLIST pidlFolder, LPDATAOBJECT pDataObj, HKEY hKeyProgID)
 {
+	wstring szFileName(MAX_PATH, L'\0');
+
 	if (pDataObj)
 	{
 		FORMATETC fe = { CF_HDROP, NULL, DVASPECT_CONTENT, -1, TYMED_HGLOBAL };
@@ -81,14 +83,14 @@ IFACEMETHODIMP LiferayNativityContextMenus::Initialize(LPCITEMIDLIST pidlFolder,
 		if (_nFiles > 0)
 		{
 			_contextMenuUtil = make_unique<ContextMenuUtil>();
-			wchar_t szFileName[MAX_PATH];
 
 			for (UINT i = 0; i < _nFiles; i++)
 			{
-				UINT success = DragQueryFile(hDrop, i, szFileName, ARRAYSIZE(szFileName));
+				UINT success = DragQueryFile(hDrop, i, szFileName.data(), szFileName.capacity());
 
 				if (success != 0)
 				{
+					szFileName.resize(wcslen(szFileName.c_str()));
 					_contextMenuUtil->AddFile(szFileName);
 				}
 			}
@@ -100,20 +102,17 @@ IFACEMETHODIMP LiferayNativityContextMenus::Initialize(LPCITEMIDLIST pidlFolder,
 	}
 	else if (pidlFolder)
 	{
-		wstring folderPath;
-
-		folderPath.resize(MAX_PATH);
-
-		if (!SHGetPathFromIDList(pidlFolder, &folderPath[0]))
+		if (!SHGetPathFromIDList(pidlFolder, szFileName.data()))
 		{
 			return E_INVALIDARG;
 		}
+		szFileName.resize(wcslen(szFileName.c_str()));
 
 		_nFiles = 1;
 
 		_contextMenuUtil = make_unique<ContextMenuUtil>();
 
-		_contextMenuUtil->AddFile(folderPath);
+		_contextMenuUtil->AddFile(szFileName);
 	}
 
 	return S_OK;

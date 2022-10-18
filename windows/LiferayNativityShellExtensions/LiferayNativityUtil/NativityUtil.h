@@ -8,9 +8,11 @@ struct __declspec(dllexport) NativityUtil
 
 	NativityUtil() = delete;
 
-	static bool IsFileFiltered(const wstring file);
+	// Traverses DLL heap boundary, cannot work without ref
+	static bool IsFileFiltered(const wstring& file);
 
 	static bool OverlaysEnabled();
 	
-	static bool ReceiveResponse(const wstring message, wstring& const response);
+	// Traverses DLL heap boundary, cannot work without ref
+	static bool ReceiveResponse(const wstring& message, wstring& response);
 };

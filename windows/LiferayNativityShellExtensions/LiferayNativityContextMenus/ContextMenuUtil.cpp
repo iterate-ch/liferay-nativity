@@ -64,14 +64,14 @@ bool ContextMenuUtil::GetMenus(vector<ContextMenuItem*>& menuList)
 
 bool ContextMenuUtil::IsMenuNeeded(void)
 {
-	for (auto selectedFile : _selectedFiles) {
+	for (auto& selectedFile : _selectedFiles) {
 		if (NativityUtil::IsFileFiltered(selectedFile)) {
 			return true;
 		}
 	}
 	return false;
 }
-
+	
 bool ContextMenuUtil::InitMenus(void)
 {
 	Json::Value jsonRoot;
