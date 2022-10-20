@@ -28,15 +28,16 @@
 		<fileset dir="${java.dir}/lib" includes="*.jar" />
 	</path>
 
-	<target name="build-jar" depends="compile,build-jni-headers">
+	<target name="build-jar" depends="compile">
 		<jar destfile="dist/liferay-nativity-${package.version}.jar" filesetmanifest="mergewithoutmain" update="true">
 			<fileset dir="${java.dir}/classes" />
 			<service type="javax.script.ScriptEngineFactory" provider="apple.applescript.AppleScriptEngineFactory" />
 		</jar>
 	</target>
 
-	<target name="build-jni-headers">
-		<javah destdir="${basedir}/windows/LiferayNativityShellExtensions/LiferayNativityWindowsUtil" classpath="${java.dir}/classes" class="com.liferay.nativity.control.win.WindowsNativityUtil"/>
+	<target name="build-jni-headers" depends="compile">
+		<javah destdir="${basedir}/windows/LiferayNativityShellExtensions/LiferayNativityWindowsUtil"
+			   classpath="${java.dir}/classes" class="com.liferay.nativity.control.win.WindowsNativityUtil"/>
 	</target>
 
 	<target name="build-sources-jar">
@@ -142,8 +143,8 @@
 		/>
 	</target>
 
-	<target name="build-windows-overlays" depends="java-home">
-		<mkdir dir="${basedir}/dist/" />
+	<target name="build-windows-overlays">
+		<mkdir dir="${basedir}/dist/"/>
 
 		<copy
 			file="${overlay.path}"
@@ -167,23 +168,27 @@
 			<replacefilter token="[$overlay.name$]" value="${overlay.name}" />
 		</replace>
 
-		<exec
-			executable="${basedir}/build-windows.cmd"
-			failonerror="true"
-		>
-			<arg value="LiferayNativityOverlays" />
-			<arg value="${basedir}/windows" />
+		<exec executable="${basedir}/build-windows.cmd"
+			  failonerror="true">
+			<arg value="LiferayNativityOverlays"/>
+			<arg value="${basedir}/windows"/>
 		</exec>
 
-		<copy
-			file="${basedir}/windows/LiferayNativityShellExtensions/Release/x64/LiferayNativityOverlays_x64.dll"
-			toFile="${basedir}/dist/${overlay.name}_x64.dll"
-		/>
+		<copy todir="${basedir}/dist">
+			<fileset dir="${basedir}/windows/LiferayNativityShellExtensions/Release">
+				<include
+						name="*/LiferayNativityOverlays_*.dll"/>
+				<include
+						name="*/LiferayNativityOverlays_*.pdb"/>
+			</fileset>
 
-		<copy
-			file="${basedir}/windows/LiferayNativityShellExtensions/Release/Win32/LiferayNativityOverlays_x86.dll"
-			toFile="${basedir}/dist/${overlay.name}_x86.dll"
-		/>
+			<mapper>
+				<chainedmapper>
+					<flattenmapper/>
+					<globmapper from="LiferayNativityOverlays*" to="${overlay.name}*"/>
+				</chainedmapper>
+			</mapper>
+		</copy>
 	</target>
 
 	<target name="clean" depends="ivy-init">
@@ -193,6 +198,12 @@
 		<delete dir="${java.dir}/lib" />
 		<delete dir="dist" />
 		<delete dir="${tmp.dir}" />
+
+		<exec executable="${basedir}/build-windows.cmd"
+			  failonerror="true">
+			<arg value="Clean"/>
+			<arg value="${basedir}/windows"/>
+		</exec>
 	</target>
 
 	<target name="compile" depends="ivy-init">

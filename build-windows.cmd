@@ -11,5 +11,5 @@ if not exist %MSBuild% (
 	exit /b 1
 )
 
-%MSBuild% %CODE_PATH%/LiferayNativityShellExtensions/LiferayNativityShellExtensions.sln /t:%COMPONENT%:Rebuild /p:Configuration=Release;Platform=x64
-%MSBuild% %CODE_PATH%/LiferayNativityShellExtensions/LiferayNativityShellExtensions.sln /t:%COMPONENT%:Rebuild /p:Configuration=Release;Platform=Win32
+%MSBuild% %CODE_PATH%/LiferayNativityShellExtensions/LiferayNativityShellExtensions.sln /t:%COMPONENT% /p:BuildProjectReferences=False /p:Configuration=Release;Platform=x64
+%MSBuild% %CODE_PATH%/LiferayNativityShellExtensions/LiferayNativityShellExtensions.sln /t:%COMPONENT% /p:BuildProjectReferences=False /p:Configuration=Release;Platform=Win32
