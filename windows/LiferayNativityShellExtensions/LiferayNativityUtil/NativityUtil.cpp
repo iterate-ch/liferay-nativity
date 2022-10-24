@@ -5,9 +5,6 @@
 
 #include "INativity.h"
 
-class DECLSPEC_UUID("8FE0A7E5-25A4-45A3-9694-37ED25D333C7")
-	ObjectProvider;
-constexpr CLSID CLSID_ObjectProvider = __uuidof(ObjectProvider);
 class DECLSPEC_UUID("3B512D20-7C95-44ED-A0A9-267C0AC9A428")
 	Nativity;
 constexpr CLSID CLSID_Nativity = __uuidof(Nativity);
