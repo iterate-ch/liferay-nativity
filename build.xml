@@ -12,7 +12,7 @@
 
 	<property name="java.dir" value="${basedir}/java" />
 	<property name="tmp.dir" value="${basedir}/tmp" />
-	<dirname property="JDK_HOME" file="${java.home}" />
+	<property name="JDK_HOME" value="${java.home}" />
 
 	<condition property="msbuild.configuration" value="Debug">
 		<isset property="debug" />
@@ -42,8 +42,12 @@
 	</target>
 
 	<target name="build-jni-headers" depends="compile">
-		<javah destdir="${basedir}/windows/LiferayNativityShellExtensions/LiferayNativityWindowsUtil"
-			   classpath="${java.dir}/classes" class="com.liferay.nativity.control.win.WindowsNativityUtil"/>
+		<javac
+			srcdir="${basedir}/java/src/com/liferay/nativity/control/win"
+			nativeHeaderDir="${basedir}/windows/LiferayNativityShellExtensions/LiferayNativityWindowsUtil"
+			classpath="${basedir}/java/classes"
+			classpathref="lib.classpath"
+			includes="WindowsNativityUtil.java" />
 	</target>
 
 	<target name="build-sources-jar">
