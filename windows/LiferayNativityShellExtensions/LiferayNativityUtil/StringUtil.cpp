@@ -13,6 +13,7 @@
  */
 
 #include "StringUtil.h"
+#include <comutil.h>
 #include <stdexcept>
 #include <Windows.h>
 
@@ -20,39 +21,37 @@ using namespace std;
 
 // Implementation: Curtesy of https://stackoverflow.com/a/69410299/1417828
 
-wstring StringUtil::toWstring(const std::string& str)
+wstring StringUtil::toWstring(const string_view& str)
 {
-    if (str.empty())
-    {
-        return L"";
-    }
+	if (str.empty()) {
+		return L"";
+	}
 
-    const auto size_needed = MultiByteToWideChar(CP_UTF8, 0, &str.at(0), (int)str.size(), nullptr, 0);
-    if (size_needed <= 0)
-    {
-        throw std::runtime_error("MultiByteToWideChar() failed: " + std::to_string(size_needed));
-    }
+	const auto size_needed = MultiByteToWideChar(CP_UTF8, 0, &str.at(0), (int)str.size(), nullptr, 0);
+	if (size_needed <= 0)
+	{
+		throw std::runtime_error("MultiByteToWideChar() failed: " + std::to_string(size_needed));
+	}
 
-    std::wstring result(size_needed, 0);
-    MultiByteToWideChar(CP_UTF8, 0, &str.at(0), (int)str.size(), &result.at(0), size_needed);
-    return result;
+	std::wstring result(size_needed, NULL);
+	MultiByteToWideChar(CP_UTF8, 0, &str.at(0), (int)str.size(), result.data(), size_needed);
+	return result;
 }
 
-string StringUtil::toString(const std::wstring& wstr)
+string StringUtil::toString(const wstring_view& wstr)
 {
-    if (wstr.empty())
-    {
-        return "";
-    }
+	if (wstr.empty()) {
+		return "";
+	}
 
-    const auto size_needed = WideCharToMultiByte(CP_UTF8, 0, &wstr.at(0), (int)wstr.size(), nullptr, 0, nullptr, nullptr);
-    if (size_needed <= 0)
-    {
-        throw std::runtime_error("WideCharToMultiByte() failed: " + std::to_string(size_needed));
-    }
+	const auto size_needed = WideCharToMultiByte(CP_UTF8, 0, &wstr.at(0), (int)wstr.size(), nullptr, 0, nullptr, nullptr);
+	if (size_needed <= 0)
+	{
+		throw std::runtime_error("WideCharToMultiByte() failed: " + std::to_string(size_needed));
+	}
 
-    std::string result(size_needed, 0);
-    WideCharToMultiByte(CP_UTF8, 0, &wstr.at(0), (int)wstr.size(), &result.at(0), size_needed, nullptr, nullptr);
-    return result;
+	std::string result(size_needed, NULL);
+	WideCharToMultiByte(CP_UTF8, 0, &wstr.at(0), (int)wstr.size(), result.data(), size_needed, nullptr, nullptr);
+	return result;
 }
 

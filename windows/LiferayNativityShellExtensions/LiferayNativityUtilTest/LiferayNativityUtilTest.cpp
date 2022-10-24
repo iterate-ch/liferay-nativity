@@ -27,12 +27,5 @@ namespace LiferayNativityUtilTest
 			CoInitializeEx(0, COINIT_MULTITHREADED);
 			NativityUtil::IsFileFiltered(L"TEST");
 		}
-
-		TEST_METHOD(TestComMessage)
-		{
-			CoInitializeEx(0, COINIT_MULTITHREADED);
-			wstring response;
-			Assert::IsTrue(NativityUtil::ReceiveResponse(L"TEST", response));
-		}
 	};
 }

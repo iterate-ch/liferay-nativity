@@ -35,12 +35,12 @@ bool ContextMenuItem::GetEnabled()
 	return _enabled;
 }
 
-wstring ContextMenuItem::GetHelpText()
+const wstring ContextMenuItem::GetHelpText()
 {
 	return _helpText;
 }
 
-wstring ContextMenuItem::GetIconPath()
+const wstring ContextMenuItem::GetIconPath()
 {
 	return _iconPath;
 }
@@ -55,12 +55,12 @@ int ContextMenuItem::GetIndex()
 	return _index;
 }
 
-wstring ContextMenuItem::GetTitle()
+const wstring ContextMenuItem::GetTitle()
 {
 	return _title;
 }
 
-wstring ContextMenuItem::GetUuid()
+const wstring ContextMenuItem::GetUuid()
 {
 	return _uuid;
 }
@@ -80,12 +80,12 @@ void ContextMenuItem::SetEnabled(bool enabled)
 	_enabled = enabled;
 }
 
-void ContextMenuItem::SetHelpText(const wstring& const helpText)
+void ContextMenuItem::SetHelpText(const std::wstring& const helpText)
 {
 	_helpText = helpText;
 }
 
-void ContextMenuItem::SetIconPath(const wstring& const iconPath)
+void ContextMenuItem::SetIconPath(const std::wstring& const iconPath)
 {
 	_iconPath = iconPath;
 }
@@ -100,12 +100,12 @@ void ContextMenuItem::SetIndex(int index)
 	_index = index;
 }
 
-void ContextMenuItem::SetTitle(const wstring& const title)
+void ContextMenuItem::SetTitle(const std::wstring& const title)
 {
 	_title = title;
 }
 
-void ContextMenuItem::SetUuid(const wstring& const uuid)
+void ContextMenuItem::SetUuid(const std::wstring& const uuid)
 {
 	_uuid = uuid;
 }

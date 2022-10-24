@@ -29,17 +29,17 @@ struct ContextMenuItem
 
 	bool GetEnabled();
 
-	std::wstring GetHelpText();
+	const std::wstring GetHelpText();
 
-	std::wstring GetIconPath();
+	const std::wstring GetIconPath();
 
 	long GetId();
 
 	int GetIndex();
 
-	std::wstring GetTitle();
+	const std::wstring GetTitle();
 
-	std::wstring GetUuid();
+	const std::wstring GetUuid();
 
 	bool HasSubMenus();
 

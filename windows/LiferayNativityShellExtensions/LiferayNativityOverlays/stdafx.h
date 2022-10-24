@@ -18,5 +18,6 @@
 #include <Unknwn.h>
 #include <Windows.h>
 #include <winrt/base.h>
+#include <comutil.h>
 
 #include "OverlayConstants.h"

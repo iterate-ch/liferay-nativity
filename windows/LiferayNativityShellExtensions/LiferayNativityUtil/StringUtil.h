@@ -14,15 +14,15 @@
 
 #pragma once
 
+#include <comutil.h>
 #include <string>
 
 class __declspec(dllexport) StringUtil
 {
 	public:
-		StringUtil();
-		~StringUtil();
+		StringUtil() = delete;
 
-		static std::string toString(const std::wstring&);
+		static std::string toString(const std::wstring_view&);
 
-		static std::wstring toWstring(const std::string&);
+		static std::wstring toWstring(const std::string_view&);
 };

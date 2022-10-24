@@ -55,7 +55,6 @@ bool ContextMenuUtil::_GetContextMenuItem(int index, const vector<ContextMenuIte
 
 bool ContextMenuUtil::GetMenus(vector<ContextMenuItem*>& menuList)
 {
-	menuList = vector<ContextMenuItem*>(_menuList.size());
 	for (auto& it : _menuList) {
 		menuList.push_back(it.get());
 	}
@@ -65,7 +64,7 @@ bool ContextMenuUtil::GetMenus(vector<ContextMenuItem*>& menuList)
 bool ContextMenuUtil::IsMenuNeeded(void)
 {
 	for (auto& selectedFile : _selectedFiles) {
-		if (NativityUtil::IsFileFiltered(selectedFile)) {
+		if (NativityUtil::IsFileFiltered(selectedFile.c_str())) {
 			return true;
 		}
 	}
@@ -84,10 +83,8 @@ bool ContextMenuUtil::InitMenus(void)
 
 	Json::FastWriter jsonWriter;
 
-	wstring getMenuMessage = StringUtil::toWstring(jsonWriter.write(jsonRoot));
-
 	wstring getMenuReceived;
-	if (NativityUtil::ReceiveResponse(getMenuMessage, getMenuReceived)) {
+	if (NativityUtil::ReceiveResponse(StringUtil::toWstring(jsonWriter.write(jsonRoot)), getMenuReceived)) {
 		Json::Reader jsonReader;
 		Json::Value jsonResponse;
 
@@ -127,8 +124,8 @@ bool ContextMenuUtil::_ParseContextMenuItem(const Json::Value& jsonContextMenuIt
 	// title
 
 	auto title = StringUtil::toWstring(jsonContextMenuItem.get(NATIVITY_TITLE, "").asCString());
-
-	if (title.size() == 0)
+	
+	if (title.length() == 0)
 	{
 		return false;
 	}
@@ -139,7 +136,7 @@ bool ContextMenuUtil::_ParseContextMenuItem(const Json::Value& jsonContextMenuIt
 
 	auto uuid = StringUtil::toWstring(jsonContextMenuItem.get(NATIVITY_UUID, "").asCString());
 
-	if (uuid.size() == 0)
+	if (uuid.length() == 0)
 	{
 		return false;
 	}
@@ -169,7 +166,7 @@ bool ContextMenuUtil::_ParseContextMenuItem(const Json::Value& jsonContextMenuIt
 
 		_ParseContextMenuItem(jsonChildContextMenuItem, *childContextMenuItem);
 
-		childrenContextMenuItems.emplace_back(move(childContextMenuItem));
+		childrenContextMenuItems.push_back(move(childContextMenuItem));
 	}
 
 	contextMenuItem.SetContextMenuItems(move(childrenContextMenuItems));
@@ -236,7 +233,6 @@ bool ContextMenuUtil::PerformAction(int command, HWND hWnd)
 
 	Json::FastWriter jsonWriter;
 
-	wstring jsonMessage = StringUtil::toWstring(jsonWriter.write(jsonRoot));
 	wstring response;
-	return NativityUtil::ReceiveResponse(jsonMessage, response);
+	return NativityUtil::ReceiveResponse(StringUtil::toWstring(jsonWriter.write(jsonRoot)), response);
 }

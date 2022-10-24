@@ -19,7 +19,7 @@
 
 struct ContextMenuAction
 {
-	std::wstring GetUuid();
+	const std::wstring GetUuid();
 
 	std::vector<std::wstring> GetFiles();
 

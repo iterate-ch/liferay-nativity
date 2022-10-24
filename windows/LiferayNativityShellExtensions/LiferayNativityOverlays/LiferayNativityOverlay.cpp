@@ -80,15 +80,14 @@ bool LiferayNativityOverlay::_IsMonitoredFileState(const wchar_t* filePath)
 	bool needed = false;
 
 	Json::Value jsonRoot;
-
+	
 	jsonRoot[NATIVITY_COMMAND] = NATIVITY_GET_FILE_ICON_ID;
 	jsonRoot[NATIVITY_VALUE] = StringUtil::toString(filePath);
 
 	Json::FastWriter jsonWriter;
 
-	wstring message = StringUtil::toWstring(jsonWriter.write(jsonRoot));
 	wstring response;
-	if (!NativityUtil::ReceiveResponse(message, response)) {
+	if (!NativityUtil::ReceiveResponse(StringUtil::toWstring(jsonWriter.write(jsonRoot)), response)) {
 		return false;
 	}
 	
@@ -102,14 +101,14 @@ bool LiferayNativityOverlay::_IsMonitoredFileState(const wchar_t* filePath)
 
 	Json::Value jsonValue = jsonResponse.get(NATIVITY_VALUE, "");
 
-	wstring valueString = StringUtil::toWstring(jsonValue.asCString());
+	string valueString = jsonValue.asString();
 
-	if (valueString.size() == 0)
+	if (valueString.length() == 0)
 	{
 		return false;
 	}
-
-	int state = _wtoi(valueString.c_str());
+	
+	int state = atoi(valueString.c_str());
 
 	if (state == OVERLAY_ID)
 	{

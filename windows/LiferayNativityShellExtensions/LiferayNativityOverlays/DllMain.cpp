@@ -42,7 +42,7 @@ STDAPI DllGetClassObject(REFCLSID rclsid, REFIID riid, void** ppv)
 	if (FAILED(CLSIDFromString(OVERLAY_GUID, (LPCLSID)&guid)) || !IsEqualCLSID(guid, rclsid)) {
 		return CLASS_E_CLASSNOTAVAILABLE;
 	}
-
+	
 	auto nativityOverlayFactory{ winrt::make<NativityOverlayFactory>() };
 	if (!nativityOverlayFactory)
 	{

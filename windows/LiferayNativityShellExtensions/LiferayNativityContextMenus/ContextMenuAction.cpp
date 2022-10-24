@@ -22,7 +22,7 @@ vector<wstring> ContextMenuAction::GetFiles()
 	return _files;
 }
 
-wstring ContextMenuAction::GetUuid()
+const wstring ContextMenuAction::GetUuid()
 {
 	return _uuid;
 }

@@ -1,7 +1,6 @@
 #include "NativityUtil.h"
 #include <comdef.h>
 #include <functional>
-#include <winrt/base.h>
 #include "UtilConstants.h"
 
 #include "INativity.h"
@@ -15,27 +14,27 @@ constexpr CLSID CLSID_Nativity = __uuidof(Nativity);
 
 _COM_SMARTPTR_TYPEDEF(INativity, IID_INativity);
 
-using namespace winrt;
-using namespace impl;
-
 bool Connect(std::function<bool(INativityPtr)> Callback) {
 	IBindCtxPtr bindCtx;
-	check_hresult(CreateBindCtx(0, &bindCtx));
+	throw_if_fail(CreateBindCtx(0, &bindCtx));
 	IRunningObjectTablePtr rot;
-	check_hresult(bindCtx->GetRunningObjectTable(&rot));
+	throw_if_fail(bindCtx->GetRunningObjectTable(&rot));
 	IEnumMonikerPtr enumMoniker;
-	check_hresult(rot->EnumRunning(&enumMoniker));
+	throw_if_fail(rot->EnumRunning(&enumMoniker));
 	IMonikerPtr nativityMoniker;
-	check_hresult(CreateClassMoniker(CLSID_Nativity, &nativityMoniker));
+	throw_if_fail(CreateClassMoniker(CLSID_Nativity, &nativityMoniker));
 
 	IMonikerPtr moniker;
 	while (enumMoniker->Next(1, &moniker, nullptr) != S_FALSE) {
 		if (nativityMoniker->IsEqual(moniker) != S_OK) {
 			continue;
 		}
+		IUnknownPtr unkn;
+		if (FAILED(rot->GetObject(moniker, &unkn))) {
+			continue;
+		}
+
 		try {
-			IUnknownPtr unkn;
-			check_hresult(rot->GetObject(moniker, &unkn));
 			INativityPtr nativity{ unkn };
 			if (Callback(nativity)) {
 				return true;
@@ -50,10 +49,10 @@ bool Connect(std::function<bool(INativityPtr)> Callback) {
 
 bool NativityUtil::IsFileFiltered(const std::wstring& const file) {
 	try {
-		return Connect([file](INativityPtr nativity) -> bool
+		return Connect([&file](INativityPtr nativity) -> bool
 			{
 				VARIANT_BOOL filtered;
-				return SUCCEEDED(nativity->IsFiltered((LPWSTR)file.data(), &filtered)) && filtered != VARIANT_FALSE;
+				return SUCCEEDED(nativity->IsFiltered(file.c_str(), &filtered)) && filtered != VARIANT_FALSE;
 			});
 	}
 	catch (...) {
@@ -76,13 +75,13 @@ bool NativityUtil::OverlaysEnabled() {
 
 bool NativityUtil::ReceiveResponse(const std::wstring& const message, std::wstring& const response) {
 	try {
-		return Connect([message, &response](INativityPtr nativity) -> bool
+		return Connect([&message, &response](INativityPtr nativity) -> bool
 			{
-				bstr_handle responseHandle;
-				if (FAILED(nativity->ReceiveMessage((LPWSTR)message.data(), responseHandle.put()))) {
+				_bstr_t marshal;
+				if (FAILED(nativity->ReceiveMessage(message.c_str(), marshal.GetAddress()))) {
 					return false;
 				}
-				response.assign(responseHandle.get());
+				response.assign(marshal);
 				return true;
 			});
 	}

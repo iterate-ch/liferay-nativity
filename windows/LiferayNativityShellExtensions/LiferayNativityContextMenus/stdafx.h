@@ -3,6 +3,7 @@
 
 #include <Unknwn.h>
 #include <Windows.h>
+#include <comutil.h>
 #include <winrt/base.h>
 
 #include "ContextMenuConstants.h"
