@@ -12,7 +12,6 @@
 
 	<property name="java.dir" value="${basedir}/java" />
 	<property name="tmp.dir" value="${basedir}/tmp" />
-	<dirname property="JDK_HOME" file="${java.home}" />
 
 	<condition property="msbuild.configuration" value="Debug">
 		<isset property="debug" />
@@ -41,27 +40,13 @@
 		</jar>
 	</target>
 
-	<target name="build-jni-headers" depends="compile">
-		<javah destdir="${basedir}/windows/LiferayNativityShellExtensions/LiferayNativityWindowsUtil"
-			   classpath="${java.dir}/classes" class="com.liferay.nativity.control.win.WindowsNativityUtil"/>
-	</target>
-
 	<target name="build-sources-jar">
 		<jar destfile="dist/liferay-nativity-${package.version}-sources.jar" filesetmanifest="mergewithoutmain" update="true">
 			<fileset dir="${java.dir}/src" includes="**/*.java" />
 		</jar>
 	</target>
 
-	<target name="java-home">
-		<mkdir dir="${tmp.dir}" />
-		<copy file="JavaHome.Build.props" todir="${tmp.dir}" overwrite="true">
-			<filterchain>
-				<expandProperties />
-			</filterchain>
-		</copy>
-	</target>
-
-	<target name="build-windows-util" depends="java-home,build-jni-headers">
+	<target name="build-windows-util">
 		<mkdir dir="${basedir}/dist/" />
 
 		<exec
@@ -84,40 +69,7 @@
 		/>
 	</target>
 
-	<target name="build-windows-native-util" depends="java-home,build-jni-headers">
-		<mkdir dir="${basedir}/dist/" />
-
-		<exec
-			executable="${basedir}/build-windows.cmd"
-			failonerror="true"
-		>
-			<arg value="LiferayNativityWindowsUtil" />
-			<arg value="${basedir}/windows" />
-			<arg value="${msbuild.configuration}" />
-		</exec>
-
-		<copy
-			file="${msbuild.artifacts}/x64/LiferayNativityWindowsUtil_x64.dll"
-			toFile="${basedir}/dist/LiferayNativityWindowsUtil_x64.dll"
-		/>
-
-		<copy
-			file="${msbuild.artifacts}/Win32/LiferayNativityWindowsUtil_x86.dll"
-			toFile="${basedir}/dist/LiferayNativityWindowsUtil_x86.dll"
-		/>
-
-		<copy
-			file="${msbuild.artifacts}/x64/LiferayNativityWindowsUtil_x64.dll"
-			toFile="${java.dir}/lib/native/LiferayNativityWindowsUtil_x64.dll"
-		/>
-
-		<copy
-			file="${msbuild.artifacts}/Win32/LiferayNativityWindowsUtil_x86.dll"
-			toFile="${java.dir}/lib/native/LiferayNativityWindowsUtil_x86.dll"
-		/>
-	</target>
-
-	<target name="build-windows-menus" depends="java-home,build-windows-util">
+	<target name="build-windows-menus" depends="build-windows-util">
 		<mkdir dir="${basedir}/dist/" />
 
 		<copy

@@ -15,8 +15,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LiferayNativityOverlays", "
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LiferayNativityUtil", "LiferayNativityUtil\LiferayNativityUtil.vcxproj", "{E4F63E19-808D-4234-8DF0-69C5F47C9CD3}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LiferayNativityWindowsUtil", "LiferayNativityWindowsUtil\LiferayNativityWindowsUtil.vcxproj", "{04E95851-453A-4215-A830-CBCB3A675647}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LiferayNativityUtilTest", "LiferayNativityUtilTest\LiferayNativityUtilTest.vcxproj", "{0331BECD-1929-468A-AAF4-0E8C22163FA3}"
 EndProject
 Global
@@ -51,14 +49,6 @@ Global
 		{E4F63E19-808D-4234-8DF0-69C5F47C9CD3}.Release|Win32.Build.0 = Release|Win32
 		{E4F63E19-808D-4234-8DF0-69C5F47C9CD3}.Release|x64.ActiveCfg = Release|x64
 		{E4F63E19-808D-4234-8DF0-69C5F47C9CD3}.Release|x64.Build.0 = Release|x64
-		{04E95851-453A-4215-A830-CBCB3A675647}.Debug|Win32.ActiveCfg = Debug|Win32
-		{04E95851-453A-4215-A830-CBCB3A675647}.Debug|Win32.Build.0 = Debug|Win32
-		{04E95851-453A-4215-A830-CBCB3A675647}.Debug|x64.ActiveCfg = Debug|x64
-		{04E95851-453A-4215-A830-CBCB3A675647}.Debug|x64.Build.0 = Debug|x64
-		{04E95851-453A-4215-A830-CBCB3A675647}.Release|Win32.ActiveCfg = Release|Win32
-		{04E95851-453A-4215-A830-CBCB3A675647}.Release|Win32.Build.0 = Release|Win32
-		{04E95851-453A-4215-A830-CBCB3A675647}.Release|x64.ActiveCfg = Release|x64
-		{04E95851-453A-4215-A830-CBCB3A675647}.Release|x64.Build.0 = Release|x64
 		{0331BECD-1929-468A-AAF4-0E8C22163FA3}.Debug|Win32.ActiveCfg = Debug|Win32
 		{0331BECD-1929-468A-AAF4-0E8C22163FA3}.Debug|Win32.Build.0 = Debug|Win32
 		{0331BECD-1929-468A-AAF4-0E8C22163FA3}.Debug|x64.ActiveCfg = Debug|x64

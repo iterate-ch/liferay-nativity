@@ -5,6 +5,4 @@
     <WILVersion>1.0.220201.1</WILVersion>
   </PropertyGroup>
 
-  <Import Project="tmp\JavaHome.Build.props" Condition="Exists('tmp\JavaHome.Build.props')" />
-  
 </Project>
