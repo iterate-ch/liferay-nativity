@@ -12,73 +12,67 @@
  * details.
  */
 
-#ifndef CONTEXTMENUITEM_H
-#define CONTEXTMENUITEM_H
+#pragma once
 
-#include "stdafx.h"
+#include <string>
+#include <vector>
 
-class __declspec(dllexport) ContextMenuItem
+struct ContextMenuItem
 {
-	public:
-		ContextMenuItem(void);
-		~ContextMenuItem(void);
+	using ContextMenuItemList = std::vector<std::unique_ptr<ContextMenuItem>>;
 
-		ContextMenuItem(const ContextMenuItem&);
+	ContextMenuItem(void);
 
-		ContextMenuItem& operator=(const ContextMenuItem&);
+	void AddContextMenuItem(const ContextMenuItem&);
 
-		void AddContextMenuItem(ContextMenuItem*);
+	const std::vector<ContextMenuItem*> GetContextMenuItems();
 
-		std::vector<ContextMenuItem*>* GetContextMenuItems();
+	bool GetEnabled();
 
-		bool GetEnabled();
+	const std::wstring GetHelpText();
 
-		std::wstring* GetHelpText();
+	const std::wstring GetIconPath();
 
-		std::wstring* GetIconPath();
+	long GetId();
 
-		long GetId();
+	int GetIndex();
 
-		int GetIndex();
+	const std::wstring GetTitle();
 
-		std::wstring* GetTitle();
+	const std::wstring GetUuid();
 
-		std::wstring* GetUuid();
+	bool HasSubMenus();
 
-		bool HasSubMenus();
+	void SetContextMenuItems(ContextMenuItemList&&);
 
-		void SetContextMenuItems(std::vector<ContextMenuItem*>*);
+	void SetEnabled(bool);
 
-		void SetEnabled(bool);
+	void SetHelpText(const std::wstring&);
 
-		void SetHelpText(std::wstring*);
+	void SetIconPath(const std::wstring&);
 
-		void SetIconPath(std::wstring*);
+	void SetId(long);
 
-		void SetId(long);
+	void SetIndex(int);
 
-		void SetIndex(int);
+	void SetTitle(const std::wstring&);
 
-		void SetTitle(std::wstring*);
+	void SetUuid(const std::wstring&);
 
-		void SetUuid(std::wstring*);
+private:
+	ContextMenuItemList _contextMenuItems;
 
-	private:
-		std::vector<ContextMenuItem*>* _contextMenuItems;
+	bool _enabled;
 
-		bool _enabled;
+	std::wstring _helpText;
 
-		std::wstring* _helpText;
+	std::wstring _iconPath;
 
-		std::wstring* _iconPath;
+	long _id;
 
-		long _id;
+	int _index;
 
-		int _index;
+	std::wstring _title;
 
-		std::wstring* _title;
-
-		std::wstring* _uuid;
+	std::wstring _uuid;
 };
-
-#endif

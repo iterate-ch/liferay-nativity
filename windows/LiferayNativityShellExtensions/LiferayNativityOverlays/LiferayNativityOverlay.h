@@ -12,27 +12,13 @@
  * details.
  */
 
-#ifndef LIFERAYNATIVITYOVERLAY_H
-#define LIFERAYNATIVITYOVERLAY_H
-
-#include "RegistryUtil.h"
-#include "StringUtil.h"
-#include "UtilConstants.h"
-#include "json/json.h"
-#include "stdafx.h"
-
-#include <iostream>
-#include <fstream>
-
 #pragma once
 
-class LiferayNativityOverlay : public IShellIconOverlayIdentifier
+#include <ShlObj.h>
 
+struct LiferayNativityOverlay : winrt::implements<LiferayNativityOverlay, IShellIconOverlayIdentifier>
 {
-	public:
-		LiferayNativityOverlay();
-
-		IFACEMETHODIMP_(ULONG) AddRef();
+		LiferayNativityOverlay() = default;
 
 		IFACEMETHODIMP GetOverlayInfo(PWSTR pwszIconFile, int cchMax, int* pIndex, DWORD* pdwFlags);
 
@@ -40,21 +26,8 @@ class LiferayNativityOverlay : public IShellIconOverlayIdentifier
 
 		IFACEMETHODIMP IsMemberOf(PCWSTR pwszPath, DWORD dwAttrib);
 
-		IFACEMETHODIMP QueryInterface(REFIID riid, void** ppv);
-
-		IFACEMETHODIMP_(ULONG) Release();
-
-	protected:
-		~LiferayNativityOverlay(void);
-
 	private:
 		bool _IsOverlaysEnabled();
 
 		bool _IsMonitoredFileState(const wchar_t* filePath);
-
-		long _referenceCount;
-
-		CommunicationSocket* _communicationSocket;
 };
-
-#endif

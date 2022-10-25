@@ -3,8 +3,8 @@ Param(
 )
 
 mvn clean install
-ant build-windows-menus build-windows-native-util build-windows-util
 ant -f build-overlays.xml overlays
+ant -f build.xml build-windows-menus
 
 foreach ($file in Get-ChildItem dist\*.dll) {
     Write-Host "Adding $($file.BaseName)"

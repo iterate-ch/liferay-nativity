@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26020.0
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32825.248
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LiferayNativityContextMenus", "LiferayNativityContextMenus\LiferayNativityContextMenus.vcxproj", "{E9BC5587-A688-4C36-8B15-DAFBAAAADCAE}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -15,7 +15,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LiferayNativityOverlays", "
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LiferayNativityUtil", "LiferayNativityUtil\LiferayNativityUtil.vcxproj", "{E4F63E19-808D-4234-8DF0-69C5F47C9CD3}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LiferayNativityWindowsUtil", "LiferayNativityWindowsUtil\LiferayNativityWindowsUtil.vcxproj", "{04E95851-453A-4215-A830-CBCB3A675647}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LiferayNativityUtilTest", "LiferayNativityUtilTest\LiferayNativityUtilTest.vcxproj", "{0331BECD-1929-468A-AAF4-0E8C22163FA3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -49,16 +49,19 @@ Global
 		{E4F63E19-808D-4234-8DF0-69C5F47C9CD3}.Release|Win32.Build.0 = Release|Win32
 		{E4F63E19-808D-4234-8DF0-69C5F47C9CD3}.Release|x64.ActiveCfg = Release|x64
 		{E4F63E19-808D-4234-8DF0-69C5F47C9CD3}.Release|x64.Build.0 = Release|x64
-		{04E95851-453A-4215-A830-CBCB3A675647}.Debug|Win32.ActiveCfg = Debug|Win32
-		{04E95851-453A-4215-A830-CBCB3A675647}.Debug|Win32.Build.0 = Debug|Win32
-		{04E95851-453A-4215-A830-CBCB3A675647}.Debug|x64.ActiveCfg = Debug|x64
-		{04E95851-453A-4215-A830-CBCB3A675647}.Debug|x64.Build.0 = Debug|x64
-		{04E95851-453A-4215-A830-CBCB3A675647}.Release|Win32.ActiveCfg = Release|Win32
-		{04E95851-453A-4215-A830-CBCB3A675647}.Release|Win32.Build.0 = Release|Win32
-		{04E95851-453A-4215-A830-CBCB3A675647}.Release|x64.ActiveCfg = Release|x64
-		{04E95851-453A-4215-A830-CBCB3A675647}.Release|x64.Build.0 = Release|x64
+		{0331BECD-1929-468A-AAF4-0E8C22163FA3}.Debug|Win32.ActiveCfg = Debug|Win32
+		{0331BECD-1929-468A-AAF4-0E8C22163FA3}.Debug|Win32.Build.0 = Debug|Win32
+		{0331BECD-1929-468A-AAF4-0E8C22163FA3}.Debug|x64.ActiveCfg = Debug|x64
+		{0331BECD-1929-468A-AAF4-0E8C22163FA3}.Debug|x64.Build.0 = Debug|x64
+		{0331BECD-1929-468A-AAF4-0E8C22163FA3}.Release|Win32.ActiveCfg = Release|Win32
+		{0331BECD-1929-468A-AAF4-0E8C22163FA3}.Release|Win32.Build.0 = Release|Win32
+		{0331BECD-1929-468A-AAF4-0E8C22163FA3}.Release|x64.ActiveCfg = Release|x64
+		{0331BECD-1929-468A-AAF4-0E8C22163FA3}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F7CE864E-E87A-427A-95B7-E3241F3E2CE6}
 	EndGlobalSection
 EndGlobal

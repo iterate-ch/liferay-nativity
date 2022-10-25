@@ -12,14 +12,12 @@
  * details.
  */
 
-#include "NativityOverlayRegistrationHandler.h"
-#include "NativityOverlayFactory.h"
 #include "stdafx.h"
+#include "NativityOverlayFactory.h"
 
 HINSTANCE instanceHandle = NULL;
 
 long dllReferenceCount = 0;
-
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD dwReason, LPVOID lpReserved)
 {
@@ -40,122 +38,20 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD dwReason, LPVOID lpReserved)
 
 STDAPI DllGetClassObject(REFCLSID rclsid, REFIID riid, void** ppv)
 {
-	HRESULT hResult = CLASS_E_CLASSNOTAVAILABLE;
 	GUID guid;
-
-	hResult = CLSIDFromString(OVERLAY_GUID, (LPCLSID)&guid);
-
-	if (hResult != S_OK)
-	{
-		return hResult;
+	if (FAILED(CLSIDFromString(OVERLAY_GUID, (LPCLSID)&guid)) || !IsEqualCLSID(guid, rclsid)) {
+		return CLASS_E_CLASSNOTAVAILABLE;
 	}
-
-	if (!IsEqualCLSID(guid, rclsid))
+	
+	auto nativityOverlayFactory{ winrt::make<NativityOverlayFactory>() };
+	if (!nativityOverlayFactory)
 	{
-		return hResult;
+		return E_FAIL;
 	}
-
-	hResult = E_OUTOFMEMORY;
-
-	wchar_t szModule[MAX_PATH];
-
-	if (GetModuleFileName(instanceHandle, szModule, ARRAYSIZE(szModule)) == 0)
-	{
-		hResult = HRESULT_FROM_WIN32(GetLastError());
-
-		return hResult;
-	}
-
-	NativityOverlayFactory* nativityOverlayFactory = new NativityOverlayFactory(szModule);
-
-	if (nativityOverlayFactory)
-	{
-		hResult = nativityOverlayFactory->QueryInterface(riid, ppv);
-		nativityOverlayFactory->Release();
-	}
-	return hResult;
+	return nativityOverlayFactory.as(riid, ppv);
 }
 
 STDAPI DllCanUnloadNow(void)
 {
 	return dllReferenceCount > 0 ? S_FALSE : S_OK;
-
-	return S_FALSE;
-}
-
-HRESULT _stdcall DllRegisterServer(void)
-{
-	HRESULT hResult = S_OK;
-
-	wchar_t szModule[MAX_PATH];
-
-	if (GetModuleFileName(instanceHandle, szModule, ARRAYSIZE(szModule)) == 0)
-	{
-		hResult = HRESULT_FROM_WIN32(GetLastError());
-
-		return hResult;
-	}
-
-	GUID guid;
-
-	hResult = CLSIDFromString(OVERLAY_GUID, (LPCLSID)&guid);
-
-	if (hResult != S_OK)
-	{
-		return hResult;
-	}
-
-	hResult = NativityOverlayRegistrationHandler::RegisterCOMObject(szModule, guid);
-
-	if (FAILED(hResult))
-	{
-		return hResult;
-	}
-
-	hResult = NativityOverlayRegistrationHandler::MakeRegistryEntries(guid, OVERLAY_NAME);
-
-	if (FAILED(hResult))
-	{
-		return hResult;
-	}
-
-	return hResult;
-}
-
-STDAPI DllUnregisterServer(void)
-{
-	HRESULT hResult = S_OK;
-
-	wchar_t szModule[MAX_PATH];
-
-	if (GetModuleFileNameW(instanceHandle, szModule, ARRAYSIZE(szModule)) == 0)
-	{
-		hResult = HRESULT_FROM_WIN32(GetLastError());
-		return hResult;
-	}
-
-	GUID guid;
-
-	hResult = CLSIDFromString(OVERLAY_GUID, (LPCLSID)&guid);
-
-	if (hResult != S_OK)
-	{
-		return hResult;
-	}
-
-	hResult = NativityOverlayRegistrationHandler::UnregisterCOMObject(guid);
-
-	if (FAILED(hResult))
-	{
-		return hResult;
-	}
-
-	hResult = NativityOverlayRegistrationHandler::RemoveRegistryEntries(OVERLAY_NAME);
-
-	if (FAILED(hResult))
-	{
-		return hResult;
-	}
-
-	return hResult;
 }

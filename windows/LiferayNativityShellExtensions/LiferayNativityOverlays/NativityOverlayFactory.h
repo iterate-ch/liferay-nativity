@@ -12,36 +12,16 @@
  * details.
  */
 
-#ifndef OKOVERLAYFACTORY_H
-#define OKOVERLAYFACTORY_H
-
 #pragma once
 
-#include "LiferayNativityOverlay.h"
-#include "stdafx.h"
+#include <Unknwn.h>
 
-class NativityOverlayFactory : public IClassFactory
+struct NativityOverlayFactory : winrt::implements<NativityOverlayFactory, IClassFactory>
 {
-	public:
-		NativityOverlayFactory(wchar_t* path);
+	NativityOverlayFactory();
+	~NativityOverlayFactory();
 
-		IFACEMETHODIMP_(ULONG) AddRef();
+	IFACEMETHODIMP CreateInstance(IUnknown* pUnkOuter, REFIID riid, void** ppv);
 
-		IFACEMETHODIMP CreateInstance(IUnknown* pUnkOuter, REFIID riid, void** ppv);
-
-		IFACEMETHODIMP LockServer(BOOL fLock);
-
-		IFACEMETHODIMP QueryInterface(REFIID riid, void** ppv);
-
-		IFACEMETHODIMP_(ULONG) Release();
-
-	protected:
-		~NativityOverlayFactory();
-
-	private:
-		wchar_t* _path;
-
-		long _referenceCount;
+	IFACEMETHODIMP LockServer(BOOL fLock);
 };
-
-#endif

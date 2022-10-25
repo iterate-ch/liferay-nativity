@@ -12,35 +12,13 @@
  * details.
  */
 
-#ifndef CONTEXTMENUFACTORY_H
-#define CONTEXTMENUFACTORY_H
-
 #pragma once
 
-#include "LiferayNativityContextMenus.h"
-#include "stdafx.h"
-
-class ContextMenuFactory : public IClassFactory
+struct ContextMenuFactory : winrt::implements<ContextMenuFactory, IClassFactory>
 {
-	public:
-		ContextMenuFactory(wchar_t*);
-
-		IFACEMETHODIMP_(ULONG) AddRef();
+		ContextMenuFactory() = default;
 
 		IFACEMETHODIMP CreateInstance(IUnknown* pUnkOuter, REFIID riid, void** ppv);
 
 		IFACEMETHODIMP LockServer(BOOL fLock);
-
-		IFACEMETHODIMP QueryInterface(REFIID riid, void** ppv);
-
-		IFACEMETHODIMP_(ULONG) Release();
-
-	protected:
-		~ContextMenuFactory();
-
-	private:
-		long _referenceCount;
-		wchar_t* _modulePath;
 };
-
-#endif

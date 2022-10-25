@@ -16,32 +16,22 @@
 
 using namespace std;
 
-NativityMessage::NativityMessage(void)
-{
-	_command = new wstring();
-	_value = new wstring();
-}
-
-NativityMessage::~NativityMessage(void)
-{
-}
-
-std::wstring* NativityMessage::GetCommand()
+std::wstring NativityMessage::GetCommand()
 {
 	return _command;
 }
 
-std::wstring* NativityMessage::GetValue()
+std::wstring NativityMessage::GetValue()
 {
 	return _value;
 }
 
-void NativityMessage::SetCommand(std::wstring* command)
+void NativityMessage::SetCommand(const std::wstring& const command)
 {
 	_command = command;
 }
 
-void NativityMessage::SetValue(std::wstring* value)
+void NativityMessage::SetValue(const std::wstring& const value)
 {
 	_value = value;
 }

@@ -12,67 +12,21 @@
  * details.
  */
 
+#include "stdafx.h"
 #include "LiferayNativityOverlay.h"
 #include <memory>
+#include <NativityUtil.h>
+#include <StringUtil.h>
+#include <json/json.h>
+#include "UtilConstants.h"
+#include "OverlayConstants.h"
 
 using namespace std;
-
-#pragma comment(lib, "shlwapi.lib")
 
 extern HINSTANCE instanceHandle;
 
 #define IDM_DISPLAY 0
 #define IDB_OK 101
-
-LiferayNativityOverlay::LiferayNativityOverlay() : _referenceCount(1)
-{
-	_communicationSocket = new CommunicationSocket();
-}
-
-LiferayNativityOverlay::~LiferayNativityOverlay(void)
-{
-	if (_communicationSocket != nullptr) {
-		delete _communicationSocket;
-	}
-}
-
-IFACEMETHODIMP_(ULONG) LiferayNativityOverlay::AddRef()
-{
-	return InterlockedIncrement(&_referenceCount);
-}
-
-IFACEMETHODIMP LiferayNativityOverlay::QueryInterface(REFIID riid, void** ppv)
-{
-	HRESULT hResult = S_OK;
-
-	if (IsEqualIID(IID_IUnknown, riid) ||  IsEqualIID(IID_IShellIconOverlayIdentifier, riid))
-	{
-		*ppv = static_cast<IShellIconOverlayIdentifier*>(this);
-	}
-	else
-	{
-		hResult = E_NOINTERFACE;
-		*ppv = NULL;
-	}
-
-	if (*ppv)
-	{
-		AddRef();
-	}
-
-	return hResult;
-}
-
-IFACEMETHODIMP_(ULONG) LiferayNativityOverlay::Release()
-{
-	ULONG cRef = InterlockedDecrement(&_referenceCount);
-	if (0 == cRef)
-	{
-		delete this;
-	}
-
-	return cRef;
-}
 
 IFACEMETHODIMP LiferayNativityOverlay::GetPriority(int* pPriority)
 {
@@ -88,8 +42,7 @@ IFACEMETHODIMP LiferayNativityOverlay::IsMemberOf(PCWSTR pwszPath, DWORD dwAttri
 		return MAKE_HRESULT(S_FALSE, 0, 0);
 	}
 
-	if (!FileUtil::IsFileFiltered(pwszPath))
-	{
+	if (!NativityUtil::IsFileFiltered(pwszPath)) {
 		return MAKE_HRESULT(S_FALSE, 0, 0);
 	}
 
@@ -119,20 +72,7 @@ IFACEMETHODIMP LiferayNativityOverlay::GetOverlayInfo(PWSTR pwszIconFile, int cc
 
 bool LiferayNativityOverlay::_IsOverlaysEnabled()
 {
-	int* enable = new int();
-	bool success = false;
-
-	if (RegistryUtil::ReadRegistry(REGISTRY_ROOT_KEY, REGISTRY_ENABLE_OVERLAY, enable))
-	{
-		if (enable)
-		{
-			success = true;
-		}
-	}
-
-	delete enable;
-
-	return success;
+	return NativityUtil::OverlaysEnabled();
 }
 
 bool LiferayNativityOverlay::_IsMonitoredFileState(const wchar_t* filePath)
@@ -140,58 +80,40 @@ bool LiferayNativityOverlay::_IsMonitoredFileState(const wchar_t* filePath)
 	bool needed = false;
 
 	Json::Value jsonRoot;
-
+	
 	jsonRoot[NATIVITY_COMMAND] = NATIVITY_GET_FILE_ICON_ID;
 	jsonRoot[NATIVITY_VALUE] = StringUtil::toString(filePath);
 
 	Json::FastWriter jsonWriter;
 
-	wstring* message = new wstring();
-
-	message->append(StringUtil::toWstring(jsonWriter.write(jsonRoot)));
-
-	wstring* response = new wstring();
-
-	if (!_communicationSocket->SendMessageReceiveResponse(message->c_str(), response))
-	{
-		delete message;
-		delete response;
-
+	wstring response;
+	if (!NativityUtil::ReceiveResponse(StringUtil::toWstring(jsonWriter.write(jsonRoot)), response)) {
 		return false;
 	}
-
+	
 	Json::Reader jsonReader;
 	Json::Value jsonResponse;
 
-	if (!jsonReader.parse(StringUtil::toString(*response), jsonResponse))
+	if (!jsonReader.parse(StringUtil::toString(response), jsonResponse))
 	{
-		delete message;
-		delete response;
-
 		return false;
 	}
 
 	Json::Value jsonValue = jsonResponse.get(NATIVITY_VALUE, "");
 
-	wstring valueString = StringUtil::toWstring(jsonValue.asString());
+	string valueString = jsonValue.asString();
 
-	if (valueString.size() == 0)
+	if (valueString.length() == 0)
 	{
-		delete message;
-		delete response;
-
 		return false;
 	}
-
-	int state = _wtoi(valueString.c_str());
+	
+	int state = atoi(valueString.c_str());
 
 	if (state == OVERLAY_ID)
 	{
 		needed = true;
 	}
-
-	delete message;
-	delete response;
 
 	return needed;
 }

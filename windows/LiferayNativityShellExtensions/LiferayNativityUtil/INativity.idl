@@ -1,0 +1,16 @@
+import "oaidl.idl";
+import "ocidl.idl";
+
+[object, oleautomation, dual, uuid("F296B3C1-661C-4D54-9DE8-D5818366E13E")]
+interface INativity : IDispatch {
+	HRESULT IsFiltered([in, string] LPCWSTR Message, [out, retval] VARIANT_BOOL* Filtered);
+
+	HRESULT OverlaysEnabled([out, retval] VARIANT_BOOL* Enabled);
+
+	HRESULT ReceiveMessage([in, string] LPCWSTR Message, [out, retval, string] LPBSTR Response);
+};
+
+[uuid("25C0E8A3-A20D-458D-B623-5918A5BEBA66"), version(0)]
+library Nativity {
+	interface INativity;
+}

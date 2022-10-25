@@ -12,28 +12,19 @@
  * details.
  */
 
-#ifndef LIFERAYNATIVITYCONTEXTMENUS_H
-#define LIFERAYNATIVITYCONTEXTMENUS_H
-
 #pragma once
 
-#include "ContextMenuAction.h"
-#include "ContextMenuConstants.h"
-#include "ContextMenuUtil.h"
-#include <atlbase.h>
+#include <ShlObj.h>
 #include <gdiplus.h>
-#include <shlobj.h>
-#include <uxtheme.h>
-#include <windows.h>
+#include <Uxtheme.h>
+#include "ContextMenuItem.h"
+#include "ContextMenuUtil.h"
 
 using namespace std;
 
-class LiferayNativityContextMenus : public IShellExtInit, public IContextMenu
+struct LiferayNativityContextMenus : winrt::implements<LiferayNativityContextMenus, IContextMenu, IShellExtInit>
 {
-	public:
 		LiferayNativityContextMenus(void);
-
-		IFACEMETHODIMP_(ULONG) AddRef();
 
 		IFACEMETHODIMP GetCommandString(UINT_PTR idCommand, UINT uFlags, UINT* pwReserved, LPSTR pszName, UINT cchMax);
 
@@ -43,15 +34,8 @@ class LiferayNativityContextMenus : public IShellExtInit, public IContextMenu
 
 		IFACEMETHODIMP QueryContextMenu(HMENU hMenu, UINT indexMenu, UINT idCmdFirst, UINT idCmdLast, UINT uFlags);
 
-		IFACEMETHODIMP QueryInterface(REFIID riid, void** ppv);
-
-		IFACEMETHODIMP_(ULONG) Release();
-
-	protected:
-		~LiferayNativityContextMenus(void);
-
 	private:
-		int _AddMenu(HMENU, ContextMenuItem*, int, int, UINT);
+		int _AddMenu(HMENU, ContextMenuItem&, int, int, UINT);
 		
 		HRESULT _ConvertBufferToPARGB32(HPAINTBUFFER hPaintBuffer, HDC hdc, HICON hicon, SIZE& sizIcon);
 		
@@ -71,17 +55,13 @@ class LiferayNativityContextMenus : public IShellExtInit, public IContextMenu
 
 		bool _InsertSeparator(HMENU, int);
 
-		bool _InsertMenu(HMENU, HMENU, int, const wchar_t*, bool);
+		bool _InsertMenu(HMENU, HMENU, int, const wstring&, bool);
 
-		bool _InsertMenu(HMENU, int, int, const wchar_t*, bool);
+		bool _InsertMenu(HMENU, int, int, const wstring&, bool);
 
 		void _PerformAction(int actionIndex, HWND hWnd);
 
-		ContextMenuUtil* _contextMenuUtil;
-
-		long _referenceCount;
+		std::unique_ptr<ContextMenuUtil> _contextMenuUtil;
 
 		UINT _nFiles;
 };
-
-#endif

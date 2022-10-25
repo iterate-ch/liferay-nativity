@@ -13,21 +13,45 @@
  */
 
 #include "StringUtil.h"
+#include <comutil.h>
+#include <stdexcept>
+#include <Windows.h>
 
 using namespace std;
 
-wstring StringUtil::toWstring(const std::string& str)
-{
-	typedef std::codecvt_utf8<wchar_t> convert_typeX;
-	std::wstring_convert<convert_typeX, wchar_t> converterX;
+// Implementation: Curtesy of https://stackoverflow.com/a/69410299/1417828
 
-	return converterX.from_bytes(str);
+wstring StringUtil::toWstring(const string_view& str)
+{
+	if (str.empty()) {
+		return L"";
+	}
+
+	const auto size_needed = MultiByteToWideChar(CP_UTF8, 0, &str.at(0), (int)str.size(), nullptr, 0);
+	if (size_needed <= 0)
+	{
+		throw std::runtime_error("MultiByteToWideChar() failed: " + std::to_string(size_needed));
+	}
+
+	std::wstring result(size_needed, NULL);
+	MultiByteToWideChar(CP_UTF8, 0, &str.at(0), (int)str.size(), result.data(), size_needed);
+	return result;
 }
 
-string StringUtil::toString(const std::wstring& wstr)
+string StringUtil::toString(const wstring_view& wstr)
 {
-	typedef std::codecvt_utf8<wchar_t> convert_typeX;
-	std::wstring_convert<convert_typeX, wchar_t> converterX;
+	if (wstr.empty()) {
+		return "";
+	}
 
-	return converterX.to_bytes(wstr);
+	const auto size_needed = WideCharToMultiByte(CP_UTF8, 0, &wstr.at(0), (int)wstr.size(), nullptr, 0, nullptr, nullptr);
+	if (size_needed <= 0)
+	{
+		throw std::runtime_error("WideCharToMultiByte() failed: " + std::to_string(size_needed));
+	}
+
+	std::string result(size_needed, NULL);
+	WideCharToMultiByte(CP_UTF8, 0, &wstr.at(0), (int)wstr.size(), result.data(), size_needed, nullptr, nullptr);
+	return result;
 }
+

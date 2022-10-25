@@ -12,11 +12,10 @@
  * details.
  */
 
+#include "stdafx.h"
 #include "ContextMenuFactory.h"
-#include "NativityContextMenuRegistrationHandler.h"
 #include "ContextMenuConstants.h"
 #include <Guiddef.h>
-#include <windows.h>
 
 HINSTANCE instanceHandle = NULL;
 
@@ -41,124 +40,20 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD dwReason, LPVOID lpReserved)
 
 STDAPI DllGetClassObject(REFCLSID rclsid, REFIID riid, void** ppv)
 {
-	HRESULT hResult = CLASS_E_CLASSNOTAVAILABLE;
-
 	GUID guid;
-
-	hResult = CLSIDFromString(CONTEXT_MENU_GUID, (LPCLSID)&guid);
-
-	if (FAILED(hResult))
+	if (FAILED(CLSIDFromString(CONTEXT_MENU_GUID, (LPCLSID)&guid)) || !IsEqualCLSID(guid, rclsid))
 	{
-		return hResult;
+		return CLASS_E_CLASSNOTAVAILABLE;
 	}
 
-	if (!IsEqualCLSID(guid, rclsid))
-	{
-		return hResult;
+	auto contextMenuFactory{ winrt::make<ContextMenuFactory>() };
+	if (!contextMenuFactory) {
+		return E_FAIL;
 	}
-
-	hResult = E_OUTOFMEMORY;
-
-	wchar_t szModule[MAX_PATH];
-
-	if (GetModuleFileName(instanceHandle, szModule, ARRAYSIZE(szModule)) == 0)
-	{
-		hResult = HRESULT_FROM_WIN32(GetLastError());
-
-		return hResult;
-	}
-
-	ContextMenuFactory* contextMenuFactory = new ContextMenuFactory(szModule);
-
-	if (contextMenuFactory)
-	{
-		hResult = contextMenuFactory->QueryInterface(riid, ppv);
-
-		contextMenuFactory->Release();
-	}
-
-	return hResult;
+	return contextMenuFactory.as(riid, ppv);
 }
 
 STDAPI DllCanUnloadNow(void)
 {
 	return dllReferenceCount > 0 ? S_FALSE : S_OK;
-}
-
-HRESULT _stdcall DllRegisterServer(void)
-{
-	HRESULT hResult = S_OK;
-
-	wchar_t szModule[MAX_PATH];
-
-	if (GetModuleFileName(instanceHandle, szModule, ARRAYSIZE(szModule)) == 0)
-	{
-		hResult = HRESULT_FROM_WIN32(GetLastError());
-
-		return hResult;
-	}
-
-	GUID guid;
-
-	hResult = CLSIDFromString(CONTEXT_MENU_GUID, (LPCLSID)&guid);
-
-	if (FAILED(hResult))
-	{
-		return hResult;
-	}
-
-	hResult = NativityContextMenuRegistrationHandler::RegisterCOMObject(szModule, guid);
-
-	if (FAILED(hResult))
-	{
-		return hResult;
-	}
-
-	hResult = NativityContextMenuRegistrationHandler::MakeRegistryEntries(guid);
-
-	if (FAILED(hResult))
-	{
-		return hResult;
-	}
-
-	return S_OK;
-}
-
-STDAPI DllUnregisterServer(void)
-{
-	HRESULT hResult = S_OK;
-
-	wchar_t szModule[MAX_PATH];
-
-	if (GetModuleFileName(instanceHandle, szModule, ARRAYSIZE(szModule)) == 0)
-	{
-		hResult = HRESULT_FROM_WIN32(GetLastError());
-
-		return hResult;
-	}
-
-	GUID guid;
-
-	hResult = CLSIDFromString(CONTEXT_MENU_GUID, (LPCLSID)&guid);
-
-	if (FAILED(hResult))
-	{
-		return hResult;
-	}
-
-	hResult = NativityContextMenuRegistrationHandler::UnregisterCOMObject(guid);
-
-	if (FAILED(hResult))
-	{
-		return hResult;
-	}
-
-	hResult = NativityContextMenuRegistrationHandler::RemoveRegistryEntries();
-
-	if (FAILED(hResult))
-	{
-		return hResult;
-	}
-
-	return S_OK;
 }

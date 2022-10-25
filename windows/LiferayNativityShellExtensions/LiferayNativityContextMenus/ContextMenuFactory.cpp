@@ -12,84 +12,26 @@
  * details.
  */
 
+#include "stdafx.h"
 #include "ContextMenuFactory.h"
+#include "LiferayNativityContextMenus.h"
 
 extern long dllReferenceCount;
-
-ContextMenuFactory::ContextMenuFactory(wchar_t* modulePath) : _modulePath(modulePath), _referenceCount(1)
-{
-	InterlockedIncrement(&dllReferenceCount);
-}
-
-ContextMenuFactory::~ContextMenuFactory()
-{
-	InterlockedDecrement(&dllReferenceCount);
-}
-
-IFACEMETHODIMP ContextMenuFactory::QueryInterface(REFIID riid, void** ppv)
-{
-	HRESULT hResult = S_OK;
-
-	if (IsEqualIID(IID_IUnknown, riid) ||
-	        IsEqualIID(IID_IClassFactory, riid))
-	{
-		*ppv = static_cast<IUnknown*>(this);
-
-		AddRef();
-	}
-	else
-	{
-		hResult = E_NOINTERFACE;
-
-		*ppv = NULL;
-	}
-
-	return hResult;
-}
-
-IFACEMETHODIMP_(ULONG) ContextMenuFactory::AddRef()
-{
-	long result = InterlockedIncrement(&_referenceCount);
-
-	return result;
-}
-
-IFACEMETHODIMP_(ULONG) ContextMenuFactory::Release()
-{
-	long cRef = InterlockedDecrement(&_referenceCount);
-
-	if (0 == cRef)
-	{
-		delete this;
-	}
-
-	return cRef;
-}
 
 IFACEMETHODIMP ContextMenuFactory::CreateInstance(
     IUnknown* pUnkOuter, REFIID riid, void** ppv)
 {
-	HRESULT hResult = CLASS_E_NOAGGREGATION;
-
-	if (pUnkOuter != NULL)
-	{
-		return hResult;
+	if (pUnkOuter != NULL) {
+		return CLASS_E_NOAGGREGATION;
 	}
-
-	hResult = E_OUTOFMEMORY;
-
-	LiferayNativityContextMenus* liferayNativityContextMenus = new(std::nothrow) LiferayNativityContextMenus();
-
+	
+	auto liferayNativityContextMenus{ winrt::make<LiferayNativityContextMenus>() };
 	if (!liferayNativityContextMenus)
 	{
-		return hResult;
+		return E_FAIL;
 	}
 
-	hResult = liferayNativityContextMenus->QueryInterface(riid, ppv);
-
-	liferayNativityContextMenus->Release();
-
-	return hResult;
+	return liferayNativityContextMenus.as(riid, ppv);
 }
 
 IFACEMETHODIMP ContextMenuFactory::LockServer(BOOL fLock)

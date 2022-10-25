@@ -27,9 +27,6 @@
     <ClCompile Include="LiferayNativityContextMenus.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="NativityContextMenuRegistrationHandler.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ContextMenuItem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -45,9 +42,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="LiferayNativityContextMenus.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="NativityContextMenuRegistrationHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="resource.h">

@@ -12,49 +12,22 @@
  * details.
  */
 
+#include "stdafx.h"
 #include "ContextMenuItem.h"
 
 using namespace std;
 
-ContextMenuItem::ContextMenuItem() : _enabled(false), _helpText(0), _id(0), _title(0)
-{
-	_contextMenuItems = new vector<ContextMenuItem*>;
-}
-
-ContextMenuItem::~ContextMenuItem()
+ContextMenuItem::ContextMenuItem() : _enabled(false), _id(0)
 {
 }
 
-ContextMenuItem::ContextMenuItem(const ContextMenuItem& other)
+const vector<ContextMenuItem*> ContextMenuItem::GetContextMenuItems()
 {
-	_contextMenuItems = other._contextMenuItems;
-	_enabled = other._enabled;
-	_helpText = other._helpText;
-	_iconPath = other._iconPath; 
-	_id = other._id;
-	_index = other._index;
-	_title = other._title;
-	_uuid = other._uuid;
-}
-
-ContextMenuItem& ContextMenuItem::operator=(const ContextMenuItem& other)
-{
-	_contextMenuItems = other._contextMenuItems;
-	_enabled = other._enabled;
-	_helpText = other._helpText;
-	_iconPath = other._iconPath; 
-	_id = other._id;
-	_index = other._index;
-	_title = other._title;
-	_uuid = other._uuid;
-
-	return *this;
-}
-
-
-std::vector<ContextMenuItem*>* ContextMenuItem::GetContextMenuItems()
-{
-	return _contextMenuItems;
+	vector<ContextMenuItem*> result;
+	for (auto& it : _contextMenuItems) {
+		result.push_back(it.get());
+	}
+	return result;
 }
 
 bool ContextMenuItem::GetEnabled()
@@ -62,12 +35,12 @@ bool ContextMenuItem::GetEnabled()
 	return _enabled;
 }
 
-wstring* ContextMenuItem::GetHelpText()
+const wstring ContextMenuItem::GetHelpText()
 {
 	return _helpText;
 }
 
-wstring* ContextMenuItem::GetIconPath()
+const wstring ContextMenuItem::GetIconPath()
 {
 	return _iconPath;
 }
@@ -82,34 +55,24 @@ int ContextMenuItem::GetIndex()
 	return _index;
 }
 
-wstring* ContextMenuItem::GetTitle()
+const wstring ContextMenuItem::GetTitle()
 {
 	return _title;
 }
 
-wstring* ContextMenuItem::GetUuid()
+const wstring ContextMenuItem::GetUuid()
 {
 	return _uuid;
 }
 
 bool ContextMenuItem::HasSubMenus()
 {
-	if (_contextMenuItems == 0)
-	{
-		return false;
-	}
-
-	if (_contextMenuItems->size() == 0)
-	{
-		return false;
-	}
-
-	return true;
+	return _contextMenuItems.size() != 0;
 }
 
-void ContextMenuItem::SetContextMenuItems(vector<ContextMenuItem*>* list)
+void ContextMenuItem::SetContextMenuItems(vector<unique_ptr<ContextMenuItem>>&& list)
 {
-	_contextMenuItems = list;
+	_contextMenuItems = move(list);
 }
 
 void ContextMenuItem::SetEnabled(bool enabled)
@@ -117,12 +80,12 @@ void ContextMenuItem::SetEnabled(bool enabled)
 	_enabled = enabled;
 }
 
-void ContextMenuItem::SetHelpText(wstring* helpText)
+void ContextMenuItem::SetHelpText(const std::wstring& const helpText)
 {
 	_helpText = helpText;
 }
 
-void ContextMenuItem::SetIconPath(wstring* iconPath)
+void ContextMenuItem::SetIconPath(const std::wstring& const iconPath)
 {
 	_iconPath = iconPath;
 }
@@ -137,12 +100,12 @@ void ContextMenuItem::SetIndex(int index)
 	_index = index;
 }
 
-void ContextMenuItem::SetTitle(wstring* title)
+void ContextMenuItem::SetTitle(const std::wstring& const title)
 {
 	_title = title;
 }
 
-void ContextMenuItem::SetUuid(wstring* uuid)
+void ContextMenuItem::SetUuid(const std::wstring& const uuid)
 {
 	_uuid = uuid;
 }
