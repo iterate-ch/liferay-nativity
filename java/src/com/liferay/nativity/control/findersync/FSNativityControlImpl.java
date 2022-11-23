@@ -334,16 +334,12 @@ public class FSNativityControlImpl extends NativityControl {
 
 						_observedFolders.add(
 							nativityMessage.getValue().toString());
-
-						return;
 					}
 					else if (nativityMessage.getCommand().equals(
 								Constants.END_OBSERVING_FOLDER)) {
 
 						_observedFolders.remove(
 							nativityMessage.getValue().toString());
-
-						return;
 					}
 
 					NativityMessage responseMessage = fireMessage(
