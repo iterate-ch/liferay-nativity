@@ -36,7 +36,7 @@
         <connection>scm:git:git@github.com:iterate-ch/liferay-nativity.git</connection>
         <developerConnection>scm:git:git@github.com:iterate-ch/liferay-nativity.git</developerConnection>
         <url>https://github.com/iterate-ch/liferay-nativity</url>
-      <tag>HEAD</tag>
+        <tag>HEAD</tag>
   </scm>
     <version>2.0.1-SNAPSHOT</version>
     <build>

@@ -45,5 +45,11 @@
             <property name="overlay.id" value="${overlay.id.pause}"/>
             <property name="overlay.path" value="${overlay.path.pause}"/>
         </ant>
+        <ant target="build-windows-overlays" inheritAll="false">
+            <property name="overlay.name" value="${overlay.name.malicious}"/>
+            <property name="overlay.guid" value="${overlay.guid.malicious}"/>
+            <property name="overlay.id" value="${overlay.id.malicious}"/>
+            <property name="overlay.path" value="${overlay.path.malicious}"/>
+        </ant>
     </target>
 </project>
