@@ -1,7 +1,8 @@
 Param(
     [Switch] $skipBuild,
     [Switch] $skipInstall,
-	[String] $version
+	[String] $version,
+    [Switch] $debugBuild
 )
 
 if (-not $version) {
@@ -11,10 +12,18 @@ if (-not $version) {
 
 Write-Host "** Building for ${version} **"
 
+$configuration = "";
+if ($debugBuild) {
+    $configuration = "-Dmsbuild.configuration=Debug"
+}
+else {
+    $configuration = "-Dmsbuild.configuration=Release"
+}
+
 if (-not $skipBuild) {
     mvn clean install
-    ant -f build-overlays.xml overlays
-    ant -f build.xml build-windows-menus
+    ant -f build-overlays.xml overlays $configuration
+    ant -f build.xml build-windows-menus $configuration
 }
 
 if (-not $skipInstall) {

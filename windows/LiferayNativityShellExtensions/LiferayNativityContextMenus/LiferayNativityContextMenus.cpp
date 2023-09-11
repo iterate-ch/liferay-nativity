@@ -12,11 +12,8 @@
  * details.
  */
 
-#include "stdafx.h"
 #include "LiferayNativityContextMenus.h"
-#include <shellapi.h>
-#include "ContextMenuUtil.h"
-#include "StringUtil.h"
+#include "ContextMenuConstants.h"
 
 LiferayNativityContextMenus::LiferayNativityContextMenus() : _contextMenuUtil(nullptr), _nFiles(0)
 {
@@ -172,11 +169,6 @@ IFACEMETHODIMP LiferayNativityContextMenus::QueryContextMenu(HMENU hMenu, UINT i
 
 	//Only default menus
 	if (CMF_DEFAULTONLY & uFlags)
-	{
-		return MAKE_HRESULT(SEVERITY_SUCCESS, 0, USHORT(0));
-	}
-
-	if (!_contextMenuUtil->IsMenuNeeded())
 	{
 		return MAKE_HRESULT(SEVERITY_SUCCESS, 0, USHORT(0));
 	}
@@ -469,7 +461,7 @@ HBITMAP LiferayNativityContextMenus::_IconToBitmapPARGB32(HICON hIcon)
 	return hBmp;
 }
 
-bool LiferayNativityContextMenus::_InsertMenu(HMENU hMenu, HMENU subMenuHandle, int location, const wstring& const text, bool enabled)
+bool LiferayNativityContextMenus::_InsertMenu(HMENU hMenu, HMENU subMenuHandle, int location, const wstring& text, bool enabled)
 {
 	MENUITEMINFO menuItem = { sizeof(menuItem) };
 
@@ -489,7 +481,7 @@ bool LiferayNativityContextMenus::_InsertMenu(HMENU hMenu, HMENU subMenuHandle, 
 	return true;
 }
 
-bool LiferayNativityContextMenus::_InsertMenu(HMENU hMenu, int location, int command, const wstring& const text, bool enabled)
+bool LiferayNativityContextMenus::_InsertMenu(HMENU hMenu, int location, int command, const wstring& text, bool enabled)
 {
 	MENUITEMINFO menuItem = { sizeof(menuItem) };
 

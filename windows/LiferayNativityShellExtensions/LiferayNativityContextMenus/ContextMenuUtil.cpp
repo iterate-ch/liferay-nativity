@@ -12,16 +12,14 @@
  * details.
  */
 
-#include "stdafx.h"
 #include "ContextMenuUtil.h"
-#include <NativityUtil.h>
-#include <memory>
 #include <StringUtil.h>
 #include <UtilConstants.h>
 
 using namespace std;
+using namespace Nativity::Util;
 
-bool ContextMenuUtil::AddFile(const wstring& const file)
+bool ContextMenuUtil::AddFile(const wstring& file)
 {
 	_selectedFiles.push_back(file);
 
@@ -35,7 +33,7 @@ bool ContextMenuUtil::GetContextMenuItem(int index, ContextMenuItem*& item)
 	return _GetContextMenuItem(index, menuList, item);
 }
 
-bool ContextMenuUtil::_GetContextMenuItem(int index, const vector<ContextMenuItem*>& const menus, ContextMenuItem*& item)
+bool ContextMenuUtil::_GetContextMenuItem(int index, const vector<ContextMenuItem*>& menus, ContextMenuItem*& item)
 {
 	for (auto it : menus) {
 		if (it->GetIndex() == index) {
@@ -61,18 +59,18 @@ bool ContextMenuUtil::GetMenus(vector<ContextMenuItem*>& menuList)
 	return true;
 }
 
-bool ContextMenuUtil::IsMenuNeeded(void)
-{
-	for (auto& selectedFile : _selectedFiles) {
-		if (NativityUtil::IsFileFiltered(selectedFile.c_str())) {
-			return true;
-		}
-	}
-	return false;
-}
-	
 bool ContextMenuUtil::InitMenus(void)
 {
+	for (const auto& selectedFile : _selectedFiles) {
+		if (NativityUtil::Find(selectedFile, connection)) {
+			break;
+		}
+	}
+
+	if (!connection) {
+		return false;
+	}
+
 	Json::Value jsonRoot;
 
 	jsonRoot[NATIVITY_COMMAND] = NATIVITY_GET_CONTEXT_MENU_LIST;
@@ -84,7 +82,7 @@ bool ContextMenuUtil::InitMenus(void)
 	Json::FastWriter jsonWriter;
 
 	wstring getMenuReceived;
-	if (NativityUtil::ReceiveResponse(StringUtil::toWstring(jsonWriter.write(jsonRoot)), getMenuReceived)) {
+	if (connection->ReceiveResponse(StringUtil::toWstring(jsonWriter.write(jsonRoot)), getMenuReceived)) {
 		Json::Reader jsonReader;
 		Json::Value jsonResponse;
 
@@ -113,7 +111,7 @@ bool ContextMenuUtil::InitMenus(void)
 	return true;
 }
 
-bool ContextMenuUtil::_ParseContextMenuItem(const Json::Value& jsonContextMenuItem, ContextMenuItem& const contextMenuItem)
+bool ContextMenuUtil::_ParseContextMenuItem(const Json::Value& jsonContextMenuItem, ContextMenuItem& contextMenuItem)
 {
 	// enabled
 
@@ -174,7 +172,7 @@ bool ContextMenuUtil::_ParseContextMenuItem(const Json::Value& jsonContextMenuIt
 	return true;
 }
 
-bool ContextMenuUtil::GetContextMenuAction(const std::wstring& const title, unique_ptr<ContextMenuAction>& item)
+bool ContextMenuUtil::GetContextMenuAction(const std::wstring& title, unique_ptr<ContextMenuAction>& item)
 {
 	for (auto& it : _menuList) {
 		if (title.compare(it->GetTitle()) == 0) {
@@ -188,7 +186,7 @@ bool ContextMenuUtil::GetContextMenuAction(const std::wstring& const title, uniq
 	return false;
 }
 
-bool ContextMenuUtil::GetContextMenuAction(int action, unique_ptr<ContextMenuAction>& const item)
+bool ContextMenuUtil::GetContextMenuAction(int action, unique_ptr<ContextMenuAction>& item)
 {
 	ContextMenuItem* contextMenuItem;
 
@@ -234,5 +232,5 @@ bool ContextMenuUtil::PerformAction(int command, HWND hWnd)
 	Json::FastWriter jsonWriter;
 
 	wstring response;
-	return NativityUtil::ReceiveResponse(StringUtil::toWstring(jsonWriter.write(jsonRoot)), response);
+	return connection->ReceiveResponse(StringUtil::toWstring(jsonWriter.write(jsonRoot)), response);
 }

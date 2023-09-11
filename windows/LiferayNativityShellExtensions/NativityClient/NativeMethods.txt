@@ -1,0 +1,6 @@
+CoGetStdMarshalEx
+CreateBindCtx
+CreateClassMoniker
+GetRunningObjectTable
+S_FALSE
+S_OK

@@ -12,8 +12,8 @@
  * details.
  */
 
-#include "stdafx.h"
 #include "NativityOverlayFactory.h"
+#include "OverlayConstants.h"
 
 HINSTANCE instanceHandle = NULL;
 

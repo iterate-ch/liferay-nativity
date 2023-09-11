@@ -12,16 +12,15 @@
  * details.
  */
 
-#include "stdafx.h"
 #include "LiferayNativityOverlay.h"
-#include <memory>
-#include <NativityUtil.h>
-#include <StringUtil.h>
-#include <json/json.h>
 #include "UtilConstants.h"
 #include "OverlayConstants.h"
+#include <json/json.h>
+#include <StringUtil.h>
+#include <memory>
 
 using namespace std;
+using namespace Nativity::Util;
 
 extern HINSTANCE instanceHandle;
 
@@ -37,17 +36,16 @@ IFACEMETHODIMP LiferayNativityOverlay::GetPriority(int* pPriority)
 
 IFACEMETHODIMP LiferayNativityOverlay::IsMemberOf(PCWSTR pwszPath, DWORD dwAttrib)
 {
-	if (!_IsOverlaysEnabled())
-	{
+	NativityUtil connection;
+	if (!NativityUtil::Find(pwszPath, connection)) {
 		return MAKE_HRESULT(S_FALSE, 0, 0);
 	}
 
-	if (!NativityUtil::IsFileFiltered(pwszPath)) {
+	if (!connection->OverlaysEnabled()) {
 		return MAKE_HRESULT(S_FALSE, 0, 0);
 	}
 
-	if (!_IsMonitoredFileState(pwszPath))
-	{
+	if (!IsMoniteredFileState(connection, pwszPath)) {
 		return MAKE_HRESULT(S_FALSE, 0, 0);
 	}
 
@@ -70,27 +68,19 @@ IFACEMETHODIMP LiferayNativityOverlay::GetOverlayInfo(PWSTR pwszIconFile, int cc
 	return S_OK;
 }
 
-bool LiferayNativityOverlay::_IsOverlaysEnabled()
-{
-	return NativityUtil::OverlaysEnabled();
-}
-
-bool LiferayNativityOverlay::_IsMonitoredFileState(const wchar_t* filePath)
-{
-	bool needed = false;
-
+bool LiferayNativityOverlay::IsMoniteredFileState(NativityUtil& connection, const wchar_t* filePath) {
 	Json::Value jsonRoot;
-	
+
 	jsonRoot[NATIVITY_COMMAND] = NATIVITY_GET_FILE_ICON_ID;
 	jsonRoot[NATIVITY_VALUE] = StringUtil::toString(filePath);
 
 	Json::FastWriter jsonWriter;
 
 	wstring response;
-	if (!NativityUtil::ReceiveResponse(StringUtil::toWstring(jsonWriter.write(jsonRoot)), response)) {
+	if (!connection->ReceiveResponse(StringUtil::toWstring(jsonWriter.write(jsonRoot)), response)) {
 		return false;
 	}
-	
+
 	Json::Reader jsonReader;
 	Json::Value jsonResponse;
 
@@ -107,13 +97,8 @@ bool LiferayNativityOverlay::_IsMonitoredFileState(const wchar_t* filePath)
 	{
 		return false;
 	}
-	
+
 	int state = atoi(valueString.c_str());
 
-	if (state == OVERLAY_ID)
-	{
-		needed = true;
-	}
-
-	return needed;
+	return state == OVERLAY_ID;
 }

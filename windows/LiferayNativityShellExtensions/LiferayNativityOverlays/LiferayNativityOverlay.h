@@ -15,19 +15,21 @@
 #pragma once
 
 #include <ShlObj.h>
+#include <NativityUtil.h>
+#include <winrt/base.h>
 
 struct LiferayNativityOverlay : winrt::implements<LiferayNativityOverlay, IShellIconOverlayIdentifier>
 {
-		LiferayNativityOverlay() = default;
+	LiferayNativityOverlay() = default;
 
-		IFACEMETHODIMP GetOverlayInfo(PWSTR pwszIconFile, int cchMax, int* pIndex, DWORD* pdwFlags);
+	IFACEMETHODIMP GetOverlayInfo(PWSTR pwszIconFile, int cchMax, int* pIndex, DWORD* pdwFlags);
 
-		IFACEMETHODIMP GetPriority(int* pPriority);
+	IFACEMETHODIMP GetPriority(int* pPriority);
 
-		IFACEMETHODIMP IsMemberOf(PCWSTR pwszPath, DWORD dwAttrib);
+	IFACEMETHODIMP IsMemberOf(PCWSTR pwszPath, DWORD dwAttrib);
 
-	private:
-		bool _IsOverlaysEnabled();
+private:
+	static bool IsMoniteredFileState(Nativity::Util::NativityUtil& connection, const wchar_t* filePath);
 
-		bool _IsMonitoredFileState(const wchar_t* filePath);
+	Nativity::Util::NativityUtil connection;
 };

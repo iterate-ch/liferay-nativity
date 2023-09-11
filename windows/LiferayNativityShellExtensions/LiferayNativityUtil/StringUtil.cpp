@@ -13,9 +13,8 @@
  */
 
 #include "StringUtil.h"
-#include <comutil.h>
-#include <stdexcept>
 #include <Windows.h>
+#include <stdexcept>
 
 using namespace std;
 
@@ -24,16 +23,16 @@ using namespace std;
 wstring StringUtil::toWstring(const string_view& str)
 {
 	if (str.empty()) {
-		return L"";
+		return {};
 	}
 
 	const auto size_needed = MultiByteToWideChar(CP_UTF8, 0, &str.at(0), (int)str.size(), nullptr, 0);
 	if (size_needed <= 0)
 	{
-		throw std::runtime_error("MultiByteToWideChar() failed: " + std::to_string(size_needed));
-	}
+		return {};
+	}	
 
-	std::wstring result(size_needed, NULL);
+	wstring result(size_needed, 0);
 	MultiByteToWideChar(CP_UTF8, 0, &str.at(0), (int)str.size(), result.data(), size_needed);
 	return result;
 }
@@ -41,17 +40,16 @@ wstring StringUtil::toWstring(const string_view& str)
 string StringUtil::toString(const wstring_view& wstr)
 {
 	if (wstr.empty()) {
-		return "";
+		return {};
 	}
 
 	const auto size_needed = WideCharToMultiByte(CP_UTF8, 0, &wstr.at(0), (int)wstr.size(), nullptr, 0, nullptr, nullptr);
 	if (size_needed <= 0)
 	{
-		throw std::runtime_error("WideCharToMultiByte() failed: " + std::to_string(size_needed));
+		return {};
 	}
 
-	std::string result(size_needed, NULL);
+	string result(size_needed, 0);
 	WideCharToMultiByte(CP_UTF8, 0, &wstr.at(0), (int)wstr.size(), result.data(), size_needed, nullptr, nullptr);
 	return result;
 }
-

@@ -12,7 +12,6 @@
  * details.
  */
 
-#include "stdafx.h"
 #include "ContextMenuFactory.h"
 #include "ContextMenuConstants.h"
 #include <Guiddef.h>

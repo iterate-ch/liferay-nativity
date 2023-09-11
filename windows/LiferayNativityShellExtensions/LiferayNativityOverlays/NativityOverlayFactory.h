@@ -15,6 +15,7 @@
 #pragma once
 
 #include <Unknwn.h>
+#include <winrt/base.h>
 
 struct NativityOverlayFactory : winrt::implements<NativityOverlayFactory, IClassFactory>
 {

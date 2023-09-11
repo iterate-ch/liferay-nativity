@@ -14,11 +14,14 @@
 
 #pragma once
 
+#include <Unknwn.h>
+#include <winrt/base.h>
+
 struct ContextMenuFactory : winrt::implements<ContextMenuFactory, IClassFactory>
 {
-		ContextMenuFactory() = default;
+	ContextMenuFactory() = default;
 
-		IFACEMETHODIMP CreateInstance(IUnknown* pUnkOuter, REFIID riid, void** ppv);
+	IFACEMETHODIMP CreateInstance(IUnknown* pUnkOuter, REFIID riid, void** ppv);
 
-		IFACEMETHODIMP LockServer(BOOL fLock);
+	IFACEMETHODIMP LockServer(BOOL fLock);
 };

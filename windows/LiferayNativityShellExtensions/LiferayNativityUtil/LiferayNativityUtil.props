@@ -1,0 +1,14 @@
+<Project>
+
+  <PropertyGroup>
+    <IncludePath>$(MSBuildThisFileDirectory);$(MSBuildThisFileDirectory)$(Configuration)\$(Platform);$(IncludePath)</IncludePath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="$(MSBuildThisFileDirectory)\LiferayNativityUtil.vcxproj">
+      <Project>{E4F63E19-808D-4234-8DF0-69C5F47C9CD3}</Project>
+      <UseLibraryDependencyInputs>true</UseLibraryDependencyInputs>
+    </ProjectReference>
+  </ItemGroup>
+
+</Project>

@@ -14,54 +14,55 @@
 
 #pragma once
 
-#include <ShlObj.h>
-#include <gdiplus.h>
-#include <Uxtheme.h>
 #include "ContextMenuItem.h"
 #include "ContextMenuUtil.h"
+#include <Gdiplus.h>
+#include <ShlObj.h>
+#include <UxTheme.h>
+#include <winrt/base.h>
 
 using namespace std;
 
 struct LiferayNativityContextMenus : winrt::implements<LiferayNativityContextMenus, IContextMenu, IShellExtInit>
 {
-		LiferayNativityContextMenus(void);
+	LiferayNativityContextMenus(void);
 
-		IFACEMETHODIMP GetCommandString(UINT_PTR idCommand, UINT uFlags, UINT* pwReserved, LPSTR pszName, UINT cchMax);
+	IFACEMETHODIMP GetCommandString(UINT_PTR idCommand, UINT uFlags, UINT* pwReserved, LPSTR pszName, UINT cchMax);
 
-		IFACEMETHODIMP Initialize(LPCITEMIDLIST pidlFolder, LPDATAOBJECT pDataObj, HKEY hKeyProgID);
+	IFACEMETHODIMP Initialize(LPCITEMIDLIST pidlFolder, LPDATAOBJECT pDataObj, HKEY hKeyProgID);
 
-		IFACEMETHODIMP InvokeCommand(LPCMINVOKECOMMANDINFO pici);
+	IFACEMETHODIMP InvokeCommand(LPCMINVOKECOMMANDINFO pici);
 
-		IFACEMETHODIMP QueryContextMenu(HMENU hMenu, UINT indexMenu, UINT idCmdFirst, UINT idCmdLast, UINT uFlags);
+	IFACEMETHODIMP QueryContextMenu(HMENU hMenu, UINT indexMenu, UINT idCmdFirst, UINT idCmdLast, UINT uFlags);
 
-	private:
-		int _AddMenu(HMENU, ContextMenuItem&, int, int, UINT);
-		
-		HRESULT _ConvertBufferToPARGB32(HPAINTBUFFER hPaintBuffer, HDC hdc, HICON hicon, SIZE& sizIcon);
-		
-		HRESULT _ConvertToPARGB32(HDC hdc, __inout Gdiplus::ARGB *pargb, HBITMAP hbmp, SIZE& sizImage, int cxRow);
-		
-		HRESULT _Create32BitHBITMAP(HDC hdc, const SIZE *psize, __deref_opt_out void **ppvBits, __out HBITMAP* phBmp);
+private:
+	int _AddMenu(HMENU, ContextMenuItem&, int, int, UINT);
 
-		void _HandleCommand(LPCMINVOKECOMMANDINFO pici);
+	HRESULT _ConvertBufferToPARGB32(HPAINTBUFFER hPaintBuffer, HDC hdc, HICON hicon, SIZE& sizIcon);
 
-		void _HandleUnicodeCommand(LPCMINVOKECOMMANDINFO pici);
+	HRESULT _ConvertToPARGB32(HDC hdc, __inout Gdiplus::ARGB* pargb, HBITMAP hbmp, SIZE& sizImage, int cxRow);
 
-		void _HandleLoCommand(LPCMINVOKECOMMANDINFO pici);
+	HRESULT _Create32BitHBITMAP(HDC hdc, const SIZE* psize, __deref_opt_out void** ppvBits, __out HBITMAP* phBmp);
 
-		bool _HasAlpha(__in Gdiplus::ARGB *pargb, SIZE& sizImage, int cxRow);
+	void _HandleCommand(LPCMINVOKECOMMANDINFO pici);
 
-		HBITMAP _IconToBitmapPARGB32(HICON hIcon);
+	void _HandleUnicodeCommand(LPCMINVOKECOMMANDINFO pici);
 
-		bool _InsertSeparator(HMENU, int);
+	void _HandleLoCommand(LPCMINVOKECOMMANDINFO pici);
 
-		bool _InsertMenu(HMENU, HMENU, int, const wstring&, bool);
+	bool _HasAlpha(__in Gdiplus::ARGB* pargb, SIZE& sizImage, int cxRow);
 
-		bool _InsertMenu(HMENU, int, int, const wstring&, bool);
+	HBITMAP _IconToBitmapPARGB32(HICON hIcon);
 
-		void _PerformAction(int actionIndex, HWND hWnd);
+	bool _InsertSeparator(HMENU, int);
 
-		std::unique_ptr<ContextMenuUtil> _contextMenuUtil;
+	bool _InsertMenu(HMENU, HMENU, int, const wstring&, bool);
 
-		UINT _nFiles;
+	bool _InsertMenu(HMENU, int, int, const wstring&, bool);
+
+	void _PerformAction(int actionIndex, HWND hWnd);
+
+	std::unique_ptr<ContextMenuUtil> _contextMenuUtil;
+
+	UINT _nFiles;
 };

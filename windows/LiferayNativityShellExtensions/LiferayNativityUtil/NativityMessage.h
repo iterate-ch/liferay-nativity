@@ -13,10 +13,10 @@
  */
 
 #pragma once
-
+#include "API.h"
 #include <string>
 
-class __declspec(dllexport) NativityMessage
+class UTIL_API NativityMessage
 {
 	public:
 		NativityMessage(void) = default;
@@ -25,9 +25,9 @@ class __declspec(dllexport) NativityMessage
 
 		std::wstring GetValue();
 
-		void SetCommand(const std::wstring&);
+		void SetCommand(std::wstring const&);
 
-		void SetValue(const std::wstring&);
+		void SetValue(std::wstring const&);
 
 	private:
 		std::wstring _command;

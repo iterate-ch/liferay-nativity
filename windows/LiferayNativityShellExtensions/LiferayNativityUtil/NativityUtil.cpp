@@ -1,88 +1,153 @@
-#include "NativityUtil.h"
-#include <comdef.h>
-#include <functional>
+#include "impl/NativityUtil.h"
 #include "UtilConstants.h"
+#include <functional>
+#include <mutex>
 
-#include "INativity.h"
+using namespace std;
+using namespace winrt;
+using namespace winrt::impl;
 
-class DECLSPEC_UUID("3B512D20-7C95-44ED-A0A9-267C0AC9A428")
-	Nativity;
-constexpr CLSID CLSID_Nativity = __uuidof(Nativity);
+namespace Nativity::Util::implementation
+{
+	NativityUtil::NativityUtil() = default;
+	NativityUtil::NativityUtil(com_ptr<INativity>& connection) : connection(move(connection)) {};
 
-_COM_SMARTPTR_TYPEDEF(INativity, IID_INativity);
-
-bool Connect(std::function<bool(INativityPtr)> Callback) {
-	IBindCtxPtr bindCtx;
-	throw_if_fail(CreateBindCtx(0, &bindCtx));
-	IRunningObjectTablePtr rot;
-	throw_if_fail(bindCtx->GetRunningObjectTable(&rot));
-	IEnumMonikerPtr enumMoniker;
-	throw_if_fail(rot->EnumRunning(&enumMoniker));
-	IMonikerPtr nativityMoniker;
-	throw_if_fail(CreateClassMoniker(CLSID_Nativity, &nativityMoniker));
-
-	IMonikerPtr moniker;
-	while (enumMoniker->Next(1, &moniker, nullptr) != S_FALSE) {
-		if (nativityMoniker->IsEqual(moniker) != S_OK) {
-			continue;
-		}
-		IUnknownPtr unkn;
-		if (FAILED(rot->GetObject(moniker, &unkn))) {
-			continue;
+	bool InstallProxy() {
+		CLSID psclsid;
+		if (SUCCEEDED(CoGetPSClsid(IID_INativity, &psclsid))) {
+			return true;
 		}
 
-		try {
-			INativityPtr nativity{ unkn };
-			if (Callback(nativity)) {
-				return true;
+		if (!IsEqualCLSID(psclsid, CLSID_NULL)) {
+			return true;
+		}
+
+		com_ptr<IPSFactoryBuffer> psFactoryBuffer;
+		if (FAILED(DllGetClassObject(IID_INativity, IID_PPV_ARGS(psFactoryBuffer.put())))) {
+			return false;
+		}
+
+		DWORD cookie;
+		if (FAILED(CoRegisterClassObject(IID_INativity, psFactoryBuffer.get(), CLSCTX_INPROC_SERVER, REGCLS_MULTIPLEUSE, &cookie))) {
+			return false;
+		}
+
+		if (FAILED(CoRegisterPSClsid(IID_INativity, IID_INativity))) {
+			CoRevokeClassObject(cookie);
+			return false;
+		}
+
+		return true;
+	}
+
+	bool NativityUtil::Find(wstring_view const& path, class_type& util) {
+		if (!InstallProxy()) {
+			return false;
+		}
+
+		static com_ptr<IMoniker> NativityClassMoniker;
+
+		com_ptr<IMoniker> nativityMoniker = NativityClassMoniker;
+		if (!nativityMoniker) {
+			if (FAILED(CreateClassMoniker(IID_INativity, nativityMoniker.put()))) {
+				return false;
 			}
+
+			NativityClassMoniker = nativityMoniker;
 		}
-		catch (...) {
 
+		com_ptr<IRunningObjectTable> rot;
+		if (FAILED(GetRunningObjectTable(0, rot.put()))) {
+			return false;
 		}
-	}
-	return false;
-}
 
-bool NativityUtil::IsFileFiltered(const std::wstring& const file) {
-	try {
-		return Connect([&file](INativityPtr nativity) -> bool
-			{
-				VARIANT_BOOL filtered;
-				return SUCCEEDED(nativity->IsFiltered(file.c_str(), &filtered)) && filtered != VARIANT_FALSE;
-			});
-	}
-	catch (...) {
-		return false;
-	}
-}
+		com_ptr<IEnumMoniker> enumMoniker;
+		if (FAILED(rot->EnumRunning(enumMoniker.put()))) {
+			return false;
+		}
 
-bool NativityUtil::OverlaysEnabled() {
-	try {
-		return Connect([](INativityPtr nativity) -> bool
-			{
-				VARIANT_BOOL enabled;
-				return SUCCEEDED(nativity->OverlaysEnabled(&enabled)) && enabled != VARIANT_FALSE;
-			});
-	}
-	catch (...) {
-		return false;
-	}
-}
+		com_ptr<IMoniker> moniker;
+		while (enumMoniker->Next(1, moniker.put(), nullptr) != S_FALSE)
+		{
+			if (nativityMoniker->IsEqual(moniker.get()) != S_OK) {
+				continue;
+			}
 
-bool NativityUtil::ReceiveResponse(const std::wstring& const message, std::wstring& const response) {
-	try {
-		return Connect([&message, &response](INativityPtr nativity) -> bool
-			{
-				_bstr_t marshal;
-				if (FAILED(nativity->ReceiveMessage(message.c_str(), marshal.GetAddress()))) {
-					return false;
+			com_ptr<IUnknown> unkn;
+			if (FAILED(rot->GetObject(moniker.get(), unkn.put()))) {
+				continue;
+			}
+
+			com_ptr<INativity> nativity;
+			if (!unkn.try_as(nativity)) {
+				continue;
+			}
+
+			try {
+				VARIANT_BOOL filter;
+				if (FAILED(nativity->IsFiltered(path.data(), &filter))) {
+					continue;
 				}
-				response.assign(marshal);
-				return true;
-			});
-	}
-	catch (...) {
+
+				if (filter == VARIANT_TRUE) {
+					util = make_unique<NativityUtil>(nativity);
+					return true;
+				}
+			}
+			catch (...) {}
+		}
+
 		return false;
+	}
+
+	bool NativityUtil::OverlaysEnabled() {
+		VARIANT_BOOL result;
+		if (FAILED(connection->OverlaysEnabled(&result))) {
+			return false;
+		}
+
+		return result == VARIANT_TRUE;
+	}
+
+	bool NativityUtil::ReceiveResponse(wstring_view const& message, wstring& response) {
+		bstr_handle response_local;
+		if (FAILED(connection->ReceiveMessage(message.data(), response_local.put()))) {
+			return false;
+		}
+
+		response.assign(response_local.get());
+		return true;
+	}
+}
+
+/* Default Implementation */
+namespace Nativity::Util
+{
+	NativityUtil::NativityUtil(unique_ptr<INativityUtil>&& ptr) : m_ptr(std::move(ptr)) {}
+	NativityUtil& NativityUtil::operator=(std::unique_ptr<INativityUtil>&& ptr) {
+		if (m_ptr == ptr) {
+			return *this;
+		}
+
+		m_ptr = std::move(ptr);
+		return *this;
+	}
+
+	INativityUtil* NativityUtil::operator->() { return m_ptr.get(); }
+	const INativityUtil* NativityUtil::operator->() const { return m_ptr.get(); };
+
+	INativityUtil& NativityUtil::operator*() { return *m_ptr.get(); }
+	const INativityUtil& NativityUtil::operator*() const { return *m_ptr.get(); }
+
+	NativityUtil::operator bool() const {
+		return m_ptr.operator bool();
+	}
+}
+
+/* Simple forwarder to implementation. */
+namespace Nativity::Util
+{
+	bool NativityUtil::Find(wstring_view const& path, NativityUtil& util) {
+		return implementation::NativityUtil::Find(path, util);
 	}
 }

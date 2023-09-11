@@ -14,10 +14,12 @@
 
 #pragma once
 
-#include <json/json.h>
-#include <NativityMessage.h>
 #include "ContextMenuAction.h"
 #include "ContextMenuItem.h"
+#include <json/json.h>
+#include <NativityMessage.h>
+#include <Windows.h>
+#include <NativityUtil.h>
 
 struct ContextMenuUtil
 {
@@ -30,8 +32,6 @@ struct ContextMenuUtil
 	bool GetContextMenuAction(const std::wstring&, std::unique_ptr<ContextMenuAction>&);
 
 	bool GetContextMenuAction(int action, std::unique_ptr<ContextMenuAction>&);
-
-	bool IsMenuNeeded(void);
 
 	bool InitMenus(void);
 
@@ -49,4 +49,6 @@ private:
 	std::vector<std::unique_ptr<ContextMenuItem>> _menuList;
 
 	std::vector<std::wstring> _selectedFiles;
+
+	Nativity::Util::NativityUtil connection;
 };

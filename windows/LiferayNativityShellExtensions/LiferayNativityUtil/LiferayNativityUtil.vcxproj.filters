@@ -19,6 +19,15 @@
     <Filter Include="Source Files\jsoncpp">
       <UniqueIdentifier>{434f4d23-9035-45b7-b3e7-aeefab03141a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\impl">
+      <UniqueIdentifier>{0cb1e404-6f2b-4947-b88f-ced23e8fce64}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\generated">
+      <UniqueIdentifier>{da9623ad-878e-4ef4-b6f6-f7572da6ab37}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\generated">
+      <UniqueIdentifier>{20a871bb-0796-4c3b-80dc-1ee8b8278817}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="UtilConstants.h">
@@ -39,8 +48,14 @@
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="$(IntDir)INativity.h">
+    <ClInclude Include="API.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="impl\NativityUtil.h">
+      <Filter>Header Files\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="$(IntDir)INativity.h">
+      <Filter>Header Files\generated</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -56,8 +71,14 @@
     <ClCompile Include="NativityUtil.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="$(IntDir)INativity_p.c">
+      <Filter>Source Files\generated</Filter>
+    </ClCompile>
+    <ClCompile Include="$(IntDir)dlldata.c">
+      <Filter>Source Files\generated</Filter>
+    </ClCompile>
     <ClCompile Include="$(IntDir)INativity_i.c">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\generated</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -69,5 +90,14 @@
     <ResourceCompile Include="Resource.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="LiferayNativityUtil.props">
+      <Filter>Resource Files</Filter>
+    </None>
+    <Content Include="$(TargetPath)" />
+    <None Include="LiferayNativityUtil.def">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

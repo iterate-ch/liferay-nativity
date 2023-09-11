@@ -14,15 +14,16 @@
 
 #pragma once
 
-#include <comutil.h>
+#include "API.h"
+#include <memory>
 #include <string>
 
-class __declspec(dllexport) StringUtil
+class StringUtil
 {
 	public:
 		StringUtil() = delete;
 
-		static std::string toString(const std::wstring_view&);
+		static std::string UTIL_API toString(const std::wstring_view&);
 
-		static std::wstring toWstring(const std::string_view&);
+		static std::wstring UTIL_API toWstring(const std::string_view&);
 };

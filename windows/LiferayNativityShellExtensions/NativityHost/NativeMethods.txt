@@ -1,0 +1,3 @@
+CreateBindCtx
+CreateClassMoniker
+GetRunningObjectTable

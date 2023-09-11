@@ -23,11 +23,11 @@ struct ContextMenuAction
 
 	std::vector<std::wstring> GetFiles();
 
-	void SetFiles(const std::vector<std::wstring>& const);
+	void SetFiles(const std::vector<std::wstring>&);
 
 	void SetUuid(const std::wstring&);
 
-	private:
-		std::vector<std::wstring> _files;
-		std::wstring _uuid;
+private:
+	std::vector<std::wstring> _files;
+	std::wstring _uuid;
 };

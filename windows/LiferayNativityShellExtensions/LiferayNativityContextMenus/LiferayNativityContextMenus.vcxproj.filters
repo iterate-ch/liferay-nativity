@@ -47,9 +47,6 @@
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="stdafx.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ContextMenuItem.h">
       <Filter>Header Files</Filter>
     </ClInclude>

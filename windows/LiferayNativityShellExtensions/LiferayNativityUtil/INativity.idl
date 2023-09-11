@@ -1,7 +1,7 @@
 import "oaidl.idl";
 import "ocidl.idl";
 
-[object, oleautomation, dual, uuid("F296B3C1-661C-4D54-9DE8-D5818366E13E")]
+[uuid("F296B3C1-661C-4D54-9DE8-D5818366E13E"), oleautomation, dual]
 interface INativity : IDispatch {
 	HRESULT IsFiltered([in, string] LPCWSTR Message, [out, retval] VARIANT_BOOL* Filtered);
 

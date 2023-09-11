@@ -12,7 +12,6 @@
  * details.
  */
 
-#include "stdafx.h"
 #include "ContextMenuAction.h"
 
 using namespace std;
@@ -27,12 +26,12 @@ const wstring ContextMenuAction::GetUuid()
 	return _uuid;
 }
 
-void ContextMenuAction::SetFiles(const vector<wstring>& const files)
+void ContextMenuAction::SetFiles(const vector<wstring>& files)
 {
 	_files = files;
 }
 
-void ContextMenuAction::SetUuid(const wstring& const uuid)
+void ContextMenuAction::SetUuid(const wstring& uuid)
 {
 	_uuid = uuid;
 }

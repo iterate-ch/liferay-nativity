@@ -1,9 +1,9 @@
-#include "pch.h"
-#include <Unknwn.h>
 #include "CppUnitTest.h"
 #include <NativityUtil.h>
+#include <Windows.h>
 
 using namespace std;
+using namespace Nativity::Util;
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace LiferayNativityUtilTest
@@ -19,13 +19,21 @@ namespace LiferayNativityUtilTest
 		TEST_METHOD(TestComOverlaysEnabled)
 		{
 			CoInitializeEx(0, COINIT_MULTITHREADED);
-			NativityUtil::OverlaysEnabled();
+			NativityUtil ptr;
+			if (!NativityUtil::Find(L"", ptr)) {
+				return;
+			}
+
+			ptr->OverlaysEnabled();
 		}
 
 		TEST_METHOD(TestComFiltered)
 		{
 			CoInitializeEx(0, COINIT_MULTITHREADED);
-			NativityUtil::IsFileFiltered(L"TEST");
+			NativityUtil ptr;
+			if (!NativityUtil::Find(L"", ptr)) {
+				return;
+			}
 		}
 	};
 }

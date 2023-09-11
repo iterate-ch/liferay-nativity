@@ -16,22 +16,22 @@
 
 using namespace std;
 
-std::wstring NativityMessage::GetCommand()
+wstring NativityMessage::GetCommand()
 {
 	return _command;
 }
 
-std::wstring NativityMessage::GetValue()
+wstring NativityMessage::GetValue()
 {
 	return _value;
 }
 
-void NativityMessage::SetCommand(const std::wstring& const command)
+void NativityMessage::SetCommand(std::wstring const& command)
 {
 	_command = command;
 }
 
-void NativityMessage::SetValue(const std::wstring& const value)
+void NativityMessage::SetValue(std::wstring const& value)
 {
 	_value = value;
 }
