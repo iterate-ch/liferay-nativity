@@ -1,6 +1,6 @@
 #pragma once
 #include <memory>
-#include <string_view>
+#include <string>
 #include "API.h"
 
 namespace Nativity::Util
