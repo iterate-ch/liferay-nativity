@@ -38,18 +38,18 @@ IFACEMETHODIMP LiferayNativityOverlay::IsMemberOf(PCWSTR pwszPath, DWORD dwAttri
 {
 	NativityUtil connection;
 	if (!NativityUtil::Find(pwszPath, connection)) {
-		return MAKE_HRESULT(S_FALSE, 0, 0);
+		return S_FALSE;
 	}
 
 	if (!connection->OverlaysEnabled()) {
-		return MAKE_HRESULT(S_FALSE, 0, 0);
+		return S_FALSE;
 	}
 
 	if (!IsMoniteredFileState(connection, pwszPath)) {
-		return MAKE_HRESULT(S_FALSE, 0, 0);
+		return S_FALSE;
 	}
 
-	return MAKE_HRESULT(S_OK, 0, 0);
+	return S_OK;
 }
 
 IFACEMETHODIMP LiferayNativityOverlay::GetOverlayInfo(PWSTR pwszIconFile, int cchMax, int* pIndex, DWORD* pdwFlags)

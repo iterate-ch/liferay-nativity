@@ -40,20 +40,34 @@ namespace Nativity::Util::implementation
 		return true;
 	}
 
+	static const com_ptr<IMoniker> const GetNativityClassMoniker() {
+		static com_ptr<IMoniker> instance;
+		atomic_thread_fence(memory_order_acquire);
+		com_ptr local{ instance };
+		if (!local) {
+			static mutex initializerMutex;
+			lock_guard initializerLock{ initializerMutex };
+			atomic_thread_fence(memory_order_relaxed);
+			local = instance;
+			if (!local) {
+				if (SUCCEEDED(CreateClassMoniker(IID_INativity, local.put()))) {
+					atomic_thread_fence(memory_order_release);
+					instance = local;
+				}
+			}
+		}
+
+		return local;
+	}
+
 	bool NativityUtil::Find(wstring_view const& path, class_type& util) {
 		if (!InstallProxy()) {
 			return false;
 		}
 
-		static com_ptr<IMoniker> NativityClassMoniker;
-
-		com_ptr<IMoniker> nativityMoniker = NativityClassMoniker;
-		if (!nativityMoniker) {
-			if (FAILED(CreateClassMoniker(IID_INativity, nativityMoniker.put()))) {
-				return false;
-			}
-
-			NativityClassMoniker = nativityMoniker;
+		com_ptr classMoniker{ GetNativityClassMoniker() };
+		if (!classMoniker) {
+			return false;
 		}
 
 		com_ptr<IRunningObjectTable> rot;
@@ -69,7 +83,7 @@ namespace Nativity::Util::implementation
 		com_ptr<IMoniker> moniker;
 		while (enumMoniker->Next(1, moniker.put(), nullptr) != S_FALSE)
 		{
-			if (nativityMoniker->IsEqual(moniker.get()) != S_OK) {
+			if (classMoniker->IsEqual(moniker.get()) != S_OK) {
 				continue;
 			}
 
