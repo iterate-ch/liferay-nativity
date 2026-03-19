@@ -2,12 +2,14 @@
 
 	<PropertyGroup>
 		<OutputType>Exe</OutputType>
-		<TargetFramework>net48</TargetFramework>
-		<Platforms>x86;x64</Platforms>
+		<TargetFramework>net8.0-windows</TargetFramework>
+		<Platforms>x86;x64;ARM64</Platforms>
 		<Nullable>enable</Nullable>
 		<LangVersion>Preview</LangVersion>
 		<ApplicationManifest>app.manifest</ApplicationManifest>
 		<MSBuildCopyContentTransitively>true</MSBuildCopyContentTransitively>
+		<SingleFile>true</SingleFile>
+		<SelfContained>true</SelfContained>
 	</PropertyGroup>
 
 	<ItemGroup>

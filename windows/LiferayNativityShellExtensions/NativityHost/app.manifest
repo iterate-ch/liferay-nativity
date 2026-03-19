@@ -3,11 +3,11 @@
 
 	<file name="LiferayNativityUtil_x64.dll">
 		<typelib tlbid="{25C0E8A3-A20D-458D-B623-5918A5BEBA66}" version="0.0" helpdir="" />
-	</file>
 
-	<comInterfaceExternalProxyStub name="INativity"
-								   iid="{F296B3C1-661C-4D54-9DE8-D5818366E13E}"
-								   tlbid="{25C0E8A3-A20D-458D-B623-5918A5BEBA66}"
+	</file>
+    <comInterfaceExternalProxyStub name="INativity"
+                                   tlbid="{25C0E8A3-A20D-458D-B623-5918A5BEBA66}"
+                                   iid="{F296B3C1-661C-4D54-9DE8-D5818366E13E}"
 								   proxyStubClsid32="{00020424-0000-0000-C000-000000000046}" />
 
 	<trustInfo xmlns="urn:schemas-microsoft-com:asm.v2">

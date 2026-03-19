@@ -20,13 +20,20 @@ else {
     $configuration = "-Dmsbuild.configuration=Release"
 }
 
+if ($skipInstall) {
+    $phase = "verify"
+}
+else {
+    $phase = "install"
+}
+
 if (-not $skipBuild) {
-    mvn clean install
+    mvn clean $phase
     ant -f build-overlays.xml overlays $configuration
     ant -f build.xml build-windows-menus $configuration
 }
 
-if (-not $skipInstall) {
+if ($phase -eq "install") {
     foreach ($file in Get-ChildItem dist\*.dll) {
         Write-Host "Adding $($file.BaseName)"
         mvn install:install-file `

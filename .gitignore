@@ -34,6 +34,10 @@ Release/
 Generated Files/
 ipch/
 
+target/
+[Bb]in/
+[Oo]bj/
+
 windows/LiferayNativityShellExtensions/LiferayNativityOverlays/OverlayConstants.h
 windows/LiferayNativityShellExtensions/LiferayNativityContextMenus/ContextMenuConstants.h
 windows/LiferayNativityShellExtensions/LiferayNativityWindowsUtil/com_liferay_nativity*

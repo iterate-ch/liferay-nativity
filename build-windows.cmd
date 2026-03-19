@@ -19,3 +19,4 @@ SET BUILD=%MSBuild% %CODE_PATH%/LiferayNativityShellExtensions/LiferayNativitySh
 
 %BUILD% -p:Platform=Win32
 %BUILD% -p:Platform=x64
+%BUILD% -p:Platform=ARM64
