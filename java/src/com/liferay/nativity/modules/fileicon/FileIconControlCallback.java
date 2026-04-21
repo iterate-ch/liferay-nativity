@@ -25,7 +25,7 @@ public interface FileIconControlCallback {
 	 * Called by the native service to request the icon overlay id for the
 	 * specified file
 	 *
-	 * @param file path requesting the overlay icon
+	 * @param path path requesting the overlay icon
 	 *
 	 * @return icon overlay id
 	 */
