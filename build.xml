@@ -58,15 +58,12 @@
 			<arg value="${msbuild.configuration}" />
 		</exec>
 
-		<copy
-			file="${msbuild.artifacts}/x64/LiferayNativityUtil_x64.dll"
-			toFile="${basedir}/dist/LiferayNativityUtil_x64.dll"
-		/>
+		<copy toDir="${basedir}/dist" flatten="true">
+			<fileset dir="${msbuild.artifacts}">
+				<include name="*/LiferayNativityUtil_*"/>
+			</fileset>
+		</copy>
 
-		<copy
-			file="${msbuild.artifacts}/Win32/LiferayNativityUtil_x86.dll"
-			toFile="${basedir}/dist/LiferayNativityUtil_x86.dll"
-		/>
 	</target>
 
 	<target name="build-windows-menus" depends="build-windows-util">
@@ -93,15 +90,11 @@
 			<arg value="${msbuild.configuration}" />
 		</exec>
 
-		<copy
-			file="${msbuild.artifacts}/x64/LiferayNativityContextMenus_x64.dll"
-			toFile="${basedir}/dist/LiferayNativityContextMenus_x64.dll"
-		/>
-
-		<copy
-			file="${msbuild.artifacts}/Win32/LiferayNativityContextMenus_x86.dll"
-			toFile="${basedir}/dist/LiferayNativityContextMenus_x86.dll"
-		/>
+		<copy toDir="${basedir}/dist" flatten="true">
+			<fileset dir="${msbuild.artifacts}">
+				<include name="*/LiferayNativityContextMenus_*"/>
+			</fileset>
+		</copy>
 	</target>
 
 	<target name="build-windows-overlays">
@@ -139,9 +132,7 @@
 		<copy todir="${basedir}/dist">
 			<fileset dir="${msbuild.artifacts}">
 				<include
-						name="*/LiferayNativityOverlays_*.dll"/>
-				<include
-						name="*/LiferayNativityOverlays_*.pdb"/>
+					name="*/LiferayNativityOverlays_*"/>
 			</fileset>
 
 			<mapper>

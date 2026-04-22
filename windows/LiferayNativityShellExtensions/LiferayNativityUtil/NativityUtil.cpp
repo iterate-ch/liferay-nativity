@@ -12,34 +12,6 @@ namespace Nativity::Util::implementation
 	NativityUtil::NativityUtil() = default;
 	NativityUtil::NativityUtil(com_ptr<INativity>& connection) : connection(move(connection)) {};
 
-	bool InstallProxy() {
-		CLSID psclsid;
-		if (SUCCEEDED(CoGetPSClsid(IID_INativity, &psclsid))) {
-			return true;
-		}
-
-		if (!IsEqualCLSID(psclsid, CLSID_NULL)) {
-			return true;
-		}
-
-		com_ptr<IPSFactoryBuffer> psFactoryBuffer;
-		if (FAILED(DllGetClassObject(IID_INativity, IID_PPV_ARGS(psFactoryBuffer.put())))) {
-			return false;
-		}
-
-		DWORD cookie;
-		if (FAILED(CoRegisterClassObject(IID_INativity, psFactoryBuffer.get(), CLSCTX_INPROC_SERVER, REGCLS_MULTIPLEUSE, &cookie))) {
-			return false;
-		}
-
-		if (FAILED(CoRegisterPSClsid(IID_INativity, IID_INativity))) {
-			CoRevokeClassObject(cookie);
-			return false;
-		}
-
-		return true;
-	}
-
 	static const com_ptr<IMoniker> const GetNativityClassMoniker() {
 		static com_ptr<IMoniker> instance;
 		atomic_thread_fence(memory_order_acquire);
@@ -61,10 +33,6 @@ namespace Nativity::Util::implementation
 	}
 
 	bool NativityUtil::Find(wstring_view const& path, class_type& util) {
-		if (!InstallProxy()) {
-			return false;
-		}
-
 		com_ptr classMoniker{ GetNativityClassMoniker() };
 		if (!classMoniker) {
 			return false;

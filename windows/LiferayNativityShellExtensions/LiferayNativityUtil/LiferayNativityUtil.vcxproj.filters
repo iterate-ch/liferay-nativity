@@ -71,12 +71,6 @@
     <ClCompile Include="NativityUtil.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="$(IntDir)INativity_p.c">
-      <Filter>Source Files\generated</Filter>
-    </ClCompile>
-    <ClCompile Include="$(IntDir)dlldata.c">
-      <Filter>Source Files\generated</Filter>
-    </ClCompile>
     <ClCompile Include="$(IntDir)INativity_i.c">
       <Filter>Source Files\generated</Filter>
     </ClCompile>
@@ -96,8 +90,5 @@
       <Filter>Resource Files</Filter>
     </None>
     <Content Include="$(TargetPath)" />
-    <None Include="LiferayNativityUtil.def">
-      <Filter>Source Files</Filter>
-    </None>
   </ItemGroup>
 </Project>
